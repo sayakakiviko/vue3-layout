@@ -1,4 +1,4 @@
-# sifang
+# vue3框架
 Vite 搭建的 ts/js + vue3 框架。使用的技术栈有：
 - 编程语言：TypeScript | JavaScript
 - 构建工具：Vite4.x
