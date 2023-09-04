@@ -22,11 +22,10 @@ const app = createApp(App);
 for (const [key, component] of Object.entries(ElIcons)) {
   app.component(key, component);
 }
-
 //注册全局自定义指令
-app.directive('debounce', directive.debounce);
-app.directive('focus', directive.focus);
-app.directive('jump', directive.jump);
+for (const [key, fn] of Object.entries(directive)) {
+  app.directive(key, fn);
+}
 
 app.use(router);
 app.use(createPinia());

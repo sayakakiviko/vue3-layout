@@ -1,11 +1,10 @@
 <template>
   <div>欢迎欢迎</div>
+  <el-checkbox v-model="checked">test</el-checkbox>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-
-const count = ref(0);
+<script setup name="Hello">
+const checked = ref(false);
 </script>
 
 <style scoped>

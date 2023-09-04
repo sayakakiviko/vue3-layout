@@ -24,11 +24,8 @@
       <!--用户信息-->
       <el-dropdown class="user-warp" trigger="click">
         <div class="user">
-          <el-avatar
-            src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
-            :size="32"
-          />
-          <el-text>张三</el-text>
+          <el-avatar :src="userInfo.avatar" :size="32" />
+          <el-text>{{ userInfo.name }}</el-text>
           <el-icon color="#999"><CaretBottom /></el-icon>
         </div>
         <template #dropdown>
@@ -73,6 +70,7 @@
 <script setup>
 import Search from './Search.vue';
 import SettingDrawer from './SettingDrawer.vue';
+import { useUserStore } from '@/store';
 
 const state = reactive({
   data: {
@@ -82,14 +80,16 @@ const state = reactive({
 });
 const { data } = toRefs(state);
 const vm = state.data;
+
 const router = useRouter();
+const { userInfo } = useUserStore();
 
 /**
  * 退出登录
  * */
 const logout = () => {
+  useUserStore().logout();
   router.replace('/login');
-  sessionStorage.removeItem('userInfo');
 };
 </script>
 

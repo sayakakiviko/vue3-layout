@@ -40,7 +40,7 @@ const tabClick = (pane) => {
 const removeTab = (key) => {
   const item = navTabStore.tabList.find((i) => i.path === key);
   navTabStore.removeTabItem(key);
-  // navTabStore.removeCacheItem(item.componentName)
+  navTabStore.removeCacheItem(route.name);
 };
 </script>
 

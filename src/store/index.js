@@ -1,14 +1,14 @@
+import { useUserStore } from './modules/user';
 import { useMenuStore } from './modules/menu';
 import { useNavTabStore } from './modules/navTab';
 import { useSettingStore } from './modules/setting';
 
-import { defineStore, createPinia } from 'pinia';
-
 const pinia = createPinia();
 
-export { useMenuStore, useNavTabStore, useSettingStore };
+export { useUserStore, useMenuStore, useNavTabStore, useSettingStore };
 export default pinia;
 
+import { defineStore, createPinia } from 'pinia';
 export const counterStore = defineStore('counter', {
   state: () => ({
     count: 10,

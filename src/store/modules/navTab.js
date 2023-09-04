@@ -5,13 +5,14 @@ import router from '@/router';
 const defaultTabItem = {
   title: '首页',
   path: '/home/index',
-  name: 'HomeIndex',
+  name: 'Home',
 };
 
 export const useNavTabStore = defineStore({
   id: 'navTab',
   state: () => ({
     tabList: [defaultTabItem], //保存页签tab的数组
+    cacheList: [], // keep-alive缓存的数组, 元素是组件名
   }),
   actions: {
     /**
@@ -40,6 +41,22 @@ export const useNavTabStore = defineStore({
           router.push({ path: this.tabList[this.tabList.length - 1]['path'] });
         }
       }
+    },
+    /**
+     * 添加一个缓存页签
+     * @name {string} 路由的name
+     * */
+    addCacheItem(name) {
+      if (this.cacheList.includes(name)) return;
+      this.cacheList.push(name);
+    },
+    /**
+     * 删除一个缓存页签
+     * @name {string} 路由的name
+     * */
+    removeCacheItem(name) {
+      const index = this.cacheList.findIndex((item) => item === name);
+      index >= 0 && this.cacheList.splice(index, 1);
     },
   },
 });

@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import routes from './routes';
+import { useUserStore } from '@/store';
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -11,7 +12,16 @@ router.beforeEach((to, from) => {
   if (sessionStorage.getItem('userInfo')) {
     //已登录
     if (from.path !== '/login' && to.path === '/login') return false; //登录后就不能再返回登录页了
-    console.log(to, from);
+
+    const { roles } = to.meta;
+    //若前往的路由有权限设置
+    if (roles && Array.isArray(roles)) {
+      const { userInfo } = useUserStore();
+      if (!roles.includes(userInfo.role)) {
+        window.$message.error('您暂无进入此页面的权限');
+        return false;
+      }
+    }
   } else {
     //未登录，需要判断是否正处于登录页，否则会无限循环
     if (from.path !== '/login' && to.path === '/login') {

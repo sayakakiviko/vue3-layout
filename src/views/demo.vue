@@ -17,7 +17,7 @@
       </el-form-item>
       <el-form-item label="pinia：">
         <h2>name：{{ useUserInfo.name }} age：{{ useUserInfo.age }}</h2>
-        <h2>getter： {{ useUserInfo.doubleCount }}</h2>
+        <!--<h2>getter： {{ useUserInfo.doubleCount }}</h2>-->
         <el-button v-debounce="addAge">addAge</el-button>
         <!--<el-button @click="addAge">addAge</el-button>-->
         <h2>home：{{ useCounter.count }}</h2>

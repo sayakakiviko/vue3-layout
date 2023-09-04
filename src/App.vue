@@ -1,8 +1,12 @@
 <template>
-  <router-view />
+  <el-config-provider :locale="$i18n.locale === 'zh' ? zhCn : en">
+    <router-view />
+  </el-config-provider>
 </template>
 
 <script setup>
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
+import en from 'element-plus/dist/locale/en.mjs';
 import { useMenuStore, useNavTabStore } from '@/store';
 
 const menuStore = useMenuStore();
@@ -28,9 +32,7 @@ const handleNavTab = () => {
     path: route.path,
     name: route.name,
   });
-  // if (route.meta.keepAlive) {
-  //   navTabStore.addCacheItem(route.name)
-  // }
+  route.meta.keepAlive && navTabStore.addCacheItem(route.name);
 };
 </script>
 

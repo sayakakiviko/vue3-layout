@@ -47,6 +47,9 @@
 </template>
 
 <script setup>
+import { useUserStore } from '@/store';
+
+const userStore = useUserStore();
 const router = useRouter();
 //账号、密码
 const formLogin = reactive({
@@ -66,13 +69,18 @@ const onLogin = () => {
   loading.value = true;
   setTimeout(() => {
     loading.value = false;
+
+    //用户信息
     const userInfo = {
+      name: '张三丰',
       username: 'admin',
       role: 'admin',
+      language: 'zh',
+      avatar:
+        'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
     };
-    sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+    userStore.login(userInfo);
     router.push('/');
-    window.$message.success('登录成功');
   }, 600);
 };
 </script>

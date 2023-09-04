@@ -1,4 +1,5 @@
 import router from '@/router';
+import { useUserStore } from '@/store';
 
 /* Vue全局指令 */
 const directive = {
@@ -109,6 +110,31 @@ const directive = {
       // 做清理工作（比如移除在 bind() 中添加的事件监听器）
       /* 为Dom移除事件 */
       el.removeEventListener('click', el.handler);
+    },
+  },
+  /**
+   * 权限指令。被设置的元素只会为有权限的角色展示
+   * 例子： <el-button v-permission="['admin','user']>提交</el-button>
+   * */
+  permission: {
+    mounted(el, binding) {
+      const userStore = useUserStore();
+      const { userInfo } = userStore;
+      const { value } = binding; //传递的值，值为数组
+      // const role = 'admin';
+
+      if (Array.isArray(value)) {
+        if (value.length > 0) {
+          const permissionValues = value;
+          // 对当前用户的角色权限和传入指令的权限类型进行比对。如果当前用户无权限则会执行节点删除操作。
+          const hasPermission = permissionValues.includes(userInfo.role);
+          if (!hasPermission && el.parentNode) {
+            el.parentNode.removeChild(el);
+          }
+        }
+      } else {
+        throw new Error(`请正确设置权限! 如 v-permission="['admin','user']"`);
+      }
     },
   },
 };
