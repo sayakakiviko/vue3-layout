@@ -44,10 +44,10 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="$i18n.locale = 'zh'">
+                    <el-dropdown-item @click="userStore.changeLanguage('zh')">
                       简体中文
                     </el-dropdown-item>
-                    <el-dropdown-item @click="$i18n.locale = 'en'">
+                    <el-dropdown-item @click="userStore.changeLanguage('en')">
                       English
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -82,13 +82,14 @@ const { data } = toRefs(state);
 const vm = state.data;
 
 const router = useRouter();
-const { userInfo } = useUserStore();
+const userStore = useUserStore();
+const { userInfo } = userStore;
 
 /**
  * 退出登录
  * */
 const logout = () => {
-  useUserStore().logout();
+  userStore.logout();
   router.replace('/login');
 };
 </script>
