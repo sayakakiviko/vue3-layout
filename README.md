@@ -20,14 +20,14 @@ Vite 搭建的 ts/js + vue3 框架。使用的技术栈有：
 打包 `npm run build`
 
 ## 说明
-- @/utils下有已经封装好的自定义指令、全局方法、axios等；接口的封装和拦截也都在axios.js里
-- @/router/routers.js文件是路由表，路由拦截则在同级的index.js内
+- @/utils下有已经封装好的自定义指令、全局方法、axios等；接口的封装和拦截也都在axios.js里。具体可使用的指令、方法请看工程结构处说明
+- @/router/routes.js文件是路由表，路由拦截则在同级的index.js内
 
 
 **全局方法**
 
 全局性的事件挂载到了window下，有$api、$fn、$message
-```typescript
+```js
 //调用
 console.log('调用全局方法：', window.$fn.$timeFormat(1646038433000));
 
@@ -50,6 +50,7 @@ window.$message('消息');
 │  .prettierrc.js            //prettierrc配置
 │  components.d.ts           //UI组件按需自动引入文件，使用了新的组件它会自动在文件内新增。由unplugin-vue-components自动生成
 │  index.html                //主页模版
+│  jsconfig.json             //js配置文件
 │  package.json              //package配置
 │  package-lock.json         //package锁定文件
 │  README.md                 //readme
@@ -85,18 +86,21 @@ window.$message('消息');
     │     en.js           //英文配置
     │     zh.js           //中文配置
     │
+    ├─layout              //布局
+    │     index.vue
+    │
     ├─views               //页面
     │     index.vue
     │
     ├─router              //路由配置
     │     index.js        //路由配置（含路由拦截）
-    │     routers.js      //路由表
+    │     routes.js      //路由表
     │
     ├─store               //pinia目录
     │     index.js
     │
     └─utils               //工具类
           axios.js        //请求配置（含接口拦截）
-          directive.js    //全局自定义指令
-          prototype.js    //全局方法
+          directive.js    //全局自定义指令。v-debounce防抖、v-focus自动聚焦、v-jump路由跳转、v-permission权限设置
+          prototype.js    //全局方法。$timeDiff时间戳返回多久以前、$timeFormat格式化时间戳
 </pre>

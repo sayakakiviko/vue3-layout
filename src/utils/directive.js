@@ -32,7 +32,7 @@ const directive = {
    * @param name/path 路由名或路径(必传)[eg:home或/home]
    * @param param 参数[eg:{id:123}]
    * @param type  按什么方式传递参数[1-按路由配置方式[eg:home/123]；2-按param方式[eg:{name/path:'',params:{id:123}}]；3-按query方式(默认)[eg:{name/path:'',query:{id:123}}]]
-   * 例子：<div class="click-wrap" :data-id="item.id" v-jump="['home_detail', {id:123}, 2]">
+   * 例子：<div class="click-wrap" :data-id="item.id" v-jump="['home_detail', {id:123}, 2]">（新窗口打开，只需要添加open修饰符即可：v-jump.open="['home_detail', {id:123}, 2]"）
    */
   jump: {
     // el: 指令绑定的元素
@@ -94,7 +94,12 @@ const directive = {
                     : { name: pathName };
               }
 
-              router.push(routeData);
+              if (binding.modifiers.open) {
+                //新窗口打开
+                window.open(routeData, '_blank');
+              } else {
+                router.push(routeData);
+              }
             }
           } else {
             console.warn('好歹给个页面名啊！');
