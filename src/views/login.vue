@@ -1,6 +1,11 @@
 <!--登录页-->
 <template>
   <div class="login">
+    <div class="login-head">
+      <el-icon><ChromeFilled /></el-icon>
+      Admin
+      <el-text type="primary">PRO</el-text>
+    </div>
     <div class="login-box">
       <!-- 左侧 -->
       <div class="login-left">
@@ -90,8 +95,29 @@ const onLogin = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
   height: 100%;
-  background-color: var(--el-color-white);
+  background: var(--el-color-white) url('@/assets/images/svg/background.svg')
+    no-repeat center top;
+  .login-head {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 80px;
+    padding: 0 100px;
+    line-height: 80px;
+    font-size: 22px;
+    .el-icon {
+      margin-right: 14px;
+      color: var(--el-color-primary);
+    }
+    .el-text {
+      margin-left: 8px;
+      font-size: 22px;
+    }
+  }
   .login-box {
     display: flex;
     width: 720px;

@@ -7,7 +7,7 @@
       <Search></Search>
 
       <!--消息通知-->
-      <el-popover placement="bottom" trigger="click" :width="260">
+      <el-popover placement="bottom" :width="260">
         <template #reference>
           <el-badge is-dot style="cursor: pointer">
             <el-icon size="22"><Bell /></el-icon>
@@ -21,8 +21,22 @@
         </template>
       </el-popover>
 
+      <el-dropdown class="language">
+        <el-icon size="22" style="outline: none"><Refresh /></el-icon>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="userStore.changeLanguage('zh')">
+              简体中文
+            </el-dropdown-item>
+            <el-dropdown-item @click="userStore.changeLanguage('en')">
+              English
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+
       <!--用户信息-->
-      <el-dropdown class="user-warp" trigger="click">
+      <el-dropdown class="user-warp">
         <div class="user">
           <el-avatar :src="userInfo.avatar" :size="32" />
           <el-text>{{ userInfo.name }}</el-text>
@@ -34,11 +48,11 @@
               {{ $t('header.global') }}
             </el-dropdown-item>
             <!--语言切换-->
-            <el-dropdown-item class="language" style="padding: 8px 16px">
+            <!--<el-dropdown-item class="language" style="padding: 8px 16px">
               <el-dropdown placement="left">
                 <span class="el-dropdown-link">
                   {{ $t('header.language') }}
-                  <el-icon class="el-icon--right" style="margin: 0">
+                  <el-icon class="el-icon&#45;&#45;right" style="margin: 0">
                     <arrow-down />
                   </el-icon>
                 </span>
@@ -53,7 +67,7 @@
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
-            </el-dropdown-item>
+            </el-dropdown-item>-->
             <el-dropdown-item @click="logout">
               {{ $t('header.logout') }}
             </el-dropdown-item>
@@ -71,6 +85,7 @@
 import Search from './Search.vue';
 import SettingDrawer from './SettingDrawer.vue';
 import { useUserStore } from '@/store';
+import { ElMessageBox } from 'element-plus'
 
 const state = reactive({
   data: {
@@ -89,8 +104,16 @@ const { userInfo } = userStore;
  * 退出登录
  * */
 const logout = () => {
-  userStore.logout();
-  router.replace('/login');
+  ElMessageBox.confirm('您确定要退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      userStore.logout();
+      router.replace('/login');
+    })
+    .catch(() => {});
 };
 </script>
 
@@ -101,6 +124,11 @@ const logout = () => {
   align-items: center;
   background-color: var(--el-color-white);
   border-bottom: 1px solid #ddd;
+  .language {
+    margin-top: -8px;
+    color: #333;
+    cursor: pointer;
+  }
   .user {
     display: flex;
     align-items: center;
