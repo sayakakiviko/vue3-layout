@@ -3,7 +3,6 @@ import { defineStore } from 'pinia';
 export const useSettingStore = defineStore({
   id: 'setting',
   state: () => ({
-    themeColor: sessionStorage.getItem('themeColor') || '#409EFF', //主题色
     //默认提供的主题色板
     colorList: [
       '#409EFF',
@@ -13,7 +12,9 @@ export const useSettingStore = defineStore({
       '#13c2c2',
       '#722ed1',
     ],
+    themeColor: sessionStorage.getItem('themeColor') || '#409EFF', //主题色
     tabsShow: true, //页签显示状态
+    accordion: false, //菜单手风琴模式
   }),
   actions: {
     /**

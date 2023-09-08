@@ -21,6 +21,7 @@
         </template>
       </el-popover>
 
+      <!--语言切换-->
       <el-dropdown class="language">
         <el-icon size="22" style="outline: none"><Refresh /></el-icon>
         <template #dropdown>

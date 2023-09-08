@@ -5,22 +5,38 @@
       <label>全局配置</label>
     </template>
     <template #default>
-      <div class="theme">
-        <el-divider content-position="left">主题颜色</el-divider>
-        <div class="theme-color">
-          <el-color-picker
-            v-model="settingStore.themeColor"
-            :predefine="settingStore.colorList"
-            @change="change"
-          />
-        </div>
-      </div>
+      <!--<div class="theme">-->
+      <!--  <el-divider content-position="left">主题颜色</el-divider>-->
+      <!--  <div class="theme-color">-->
+      <!--    <el-color-picker-->
+      <!--      v-model="settingStore.themeColor"-->
+      <!--      :predefine="settingStore.colorList"-->
+      <!--      @change="change"-->
+      <!--    />-->
+      <!--  </div>-->
+      <!--</div>-->
       <div class="content">
-        <el-divider content-position="left">内容区域</el-divider>
+        <el-divider content-position="left">界面显示</el-divider>
+        <el-row>
+          <el-col :span="12">主题颜色：</el-col>
+          <el-col :span="12">
+            <el-color-picker
+              v-model="settingStore.themeColor"
+              :predefine="settingStore.colorList"
+              @change="change"
+            />
+          </el-col>
+        </el-row>
         <el-row>
           <el-col :span="12">页签显示：</el-col>
-          <el-col :span="12" style="text-align: right">
+          <el-col :span="12">
             <el-switch v-model="settingStore.tabsShow" />
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">菜单手风琴模式：</el-col>
+          <el-col :span="12">
+            <el-switch v-model="settingStore.accordion" />
           </el-col>
         </el-row>
       </div>
@@ -60,9 +76,6 @@ const change = (val) => {
   changeTheme(val);
   settingStore.changeThemeColor(settingStore.themeColor);
 };
-
-//页签显示状态
-// const tabsShow = ref(true);
 </script>
 
 <style lang="less">
@@ -73,4 +86,11 @@ const change = (val) => {
   font-size: 16px;
 }
 </style>
-<style scoped lang="less"></style>
+<style scoped lang="less">
+.el-row {
+  padding: 4px 0;
+  .el-col + .el-col {
+    text-align: right;
+  }
+}
+</style>

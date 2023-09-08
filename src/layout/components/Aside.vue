@@ -11,6 +11,7 @@
           <el-menu
             :default-active="menuStore.menuActive"
             :collapse="isCollapse"
+            :unique-opened="useSettingStore().accordion"
             router
           >
             <MenuItem
@@ -33,7 +34,7 @@
 
 <script setup>
 import MenuItem from './MenuItem.vue';
-import { useMenuStore } from '@/store';
+import { useMenuStore, useSettingStore } from '@/store';
 
 const menuStore = useMenuStore();
 const router = useRouter();
