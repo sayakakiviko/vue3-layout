@@ -20,37 +20,60 @@ const routes = [
   {
     path: '/',
     name: 'Layout',
-    redirect: '/home/index',
+    redirect: '/home',
     component: () => import('@/layout/index.vue'), // 路由懒加载
     children: [
       {
         path: '/home',
-        redirect: '/home/index',
-        meta: { title: '个人中心', icon: 'location' }, //icon：显示在菜单上的图标
+        name: 'Home',
+        component: () => import('@/views/home.vue'), // 路由懒加载
+        meta: { title: '首页', icon: 'location' }, //icon：显示在菜单上的图标
         menu: true, //是否要显示在菜单上
-        children: [
-          {
-            path: '/home/index',
-            name: 'Home',
-            component: () => import('@/views/home.vue'),
-            meta: { title: '首页', icon: 'setting', keepAlive: true },
-            menu: true,
-          },
-          {
-            path: '/home/demo',
-            name: 'Demo',
-            component: () => import('@/views/demo.vue'), // 路由懒加载
-            meta: { title: 'demo', keepAlive: false },
-            menu: true,
-          },
-        ],
       },
       {
         path: '/hello',
         name: 'Hello',
-        component: () => import('@/views/hello.vue'), // 路由懒加载
-        meta: { title: '你好', icon: 'document', keepAlive: true },
+        redirect: '/hello/index',
+        // component: () => import('@/views/hello.vue'), // 路由懒加载
+        meta: { title: '你好', icon: 'setting', keepAlive: true },
         menu: true,
+        children: [
+          {
+            path: '/hello/index',
+            name: 'Hello',
+            component: () => import('@/views/hello.vue'), // 路由懒加载
+            meta: {
+              title: '你好',
+              icon: 'document',
+              breadcrumb: [
+                { title: 'hello', name: 'Hello' },
+                {
+                  title: '你好',
+                  name: 'Hello',
+                },
+              ],
+              keepAlive: true,
+            },
+            menu: true,
+          },
+          {
+            path: '/hello/demo',
+            name: 'Demo',
+            component: () => import('@/views/demo.vue'), // 路由懒加载
+            meta: {
+              title: '演示',
+              breadcrumb: [
+                { title: 'hello', name: 'Hello' },
+                {
+                  title: '演示',
+                  name: 'Demo',
+                },
+              ],
+              keepAlive: false,
+            },
+            menu: true,
+          },
+        ],
       },
     ],
   },

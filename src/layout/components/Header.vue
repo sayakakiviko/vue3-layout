@@ -1,7 +1,8 @@
 <!--顶部栏-->
 <template>
   <el-header>
-    <h2>{{ $t('projectName') }}</h2>
+    <!--<h2>{{ $t('projectName') }}</h2>-->
+    <Breadcrumb></Breadcrumb>
     <el-space wrap size="large">
       <!--搜索-->
       <Search></Search>
@@ -83,10 +84,11 @@
 </template>
 
 <script setup>
+import Breadcrumb from './breadcrumb.vue';
 import Search from './Search.vue';
 import SettingDrawer from './SettingDrawer.vue';
 import { useUserStore } from '@/store';
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox } from 'element-plus';
 
 const state = reactive({
   data: {

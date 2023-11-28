@@ -42,7 +42,7 @@ export const useMenuStore = defineStore({
   id: 'menu',
   state: () => ({
     menuList, //菜单列表
-    menuActive: '/home/index', //激活的菜单
+    menuActive: '/home', //激活的菜单
   }),
   actions: {
     /**

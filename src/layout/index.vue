@@ -20,7 +20,7 @@
 </template>
 
 <script setup name="layout">
-import Aside from './components/Aside.vue';
+import Aside from './components/menu/Aside.vue';
 import Header from './components/Header.vue';
 import NavTab from './components/NavTab.vue';
 import { useSettingStore, useNavTabStore } from '@/store';

@@ -4,7 +4,7 @@ import router from '@/router';
 //默认要展示的tab标签
 const defaultTabItem = {
   title: '首页',
-  path: '/home/index',
+  path: '/home',
   name: 'Home',
 };
 

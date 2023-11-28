@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import routes from './routes';
-import { useUserStore } from '@/store';
+import { useUserStore, useBreadcrumbStore } from '@/store';
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -22,6 +22,9 @@ router.beforeEach((to, from) => {
         return false;
       }
     }
+    // 路由跳转时确定当前面包屑
+    const breadcrumbStore = useBreadcrumbStore();
+    breadcrumbStore.breadcrumb = getBreadcrumb(to);
   } else {
     //未登录，需要判断是否正处于登录页，否则会无限循环
     if (from.path !== '/login' && to.path === '/login') {
@@ -29,11 +32,24 @@ router.beforeEach((to, from) => {
       return;
     } else {
       //否则跳转登录页
-      console.log('未登录');
-      console.log(to);
+      window.$message.error('请登录');
       return '/login';
     }
   }
 });
+
+/**
+ * 通过路由信息获取面包屑数据
+ * @route {object} 当前路由
+ * */
+function getBreadcrumb(route) {
+  let breadcrumbList = [];
+  route.matched.forEach((el) => {
+    if (el.meta.breadcrumb) {
+      breadcrumbList.push(...el.meta.breadcrumb);
+    }
+  });
+  return breadcrumbList;
+}
 
 export default router;
