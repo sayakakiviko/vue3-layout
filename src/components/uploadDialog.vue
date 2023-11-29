@@ -28,6 +28,7 @@
         <!--<el-icon size="60">-->
         <!--  <svg><use xlink:href="#icon-shangchuanwenjian"></use></svg>-->
         <!--</el-icon>-->
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
         <div class="el-upload__text">
           将文件拖拽支至此处，或者点击
           <el-button>

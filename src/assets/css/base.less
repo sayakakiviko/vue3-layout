@@ -89,3 +89,41 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+
+.page-wrap{
+  overflow-y: auto;
+  background: #fff;
+  padding: 20px;
+  // height: calc(100% - 40px);
+  height: calc(100vh - 190px);
+  border-radius: 8px;
+  h3 {
+    display: flex;
+    align-items: center;
+    .el-icon {
+      margin-right: 4px;
+      padding: 6px;
+      color: var(--el-color-primary);
+      border-radius: 50%;
+      &.bg{
+        background-color: var(--el-color-primary-light-9);
+      }
+    }
+  }
+}
+
+.card-wrap {
+  box-sizing: border-box;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: var(--el-color-white);
+  border-radius: 4px;
+  box-shadow: var(--el-box-shadow-lighter);
+  h3 .el-icon {
+    margin-right: 4px;
+    padding: 6px;
+    // background-color: var(--el-color-primary-light-9);
+    color: var(--el-color-primary);
+    border-radius: 50%;
+  }
+}
