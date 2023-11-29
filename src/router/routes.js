@@ -79,10 +79,10 @@ const routes = [
   },
   //Layout容器外的路由
   {
-    path: '/helloWorld',
-    name: 'HelloWorld',
-    component: () => import('@/components/HelloWorld.vue'),
-    meta: { title: 'HelloWorld', keepAlive: false, roles: ['user'] }, //roles的值代表哪些角色可以进入此路由
+    path: '/404',
+    name: '404',
+    component: () => import('@/views/404.vue'),
+    meta: { title: '404', keepAlive: false, roles: ['user'] }, //roles的值代表哪些角色可以进入此路由
     menu: true,
     // 单独的前置路由守卫
     beforeEnter: (to, from) => {
