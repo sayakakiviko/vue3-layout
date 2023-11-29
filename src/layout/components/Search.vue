@@ -75,11 +75,11 @@ const vm = state.data;
 
 vm.selectList = [
   {
-    label: 'CAD文档啊',
+    label: 'CAD文档',
     value: 1,
   },
   {
-    label: 'test',
+    label: 'testtest',
     value: 2,
   },
 ];
@@ -97,8 +97,9 @@ const onSearch = () => {
 .search {
   width: 320px;
   background-color: var(--el-color-info-light-9);
-  /deep/.el-select {
+  :deep(.el-select) {
     width: 80px;
+    font-size: 12px;
     .el-input__wrapper {
       padding: 1px 5px;
     }
@@ -107,15 +108,19 @@ const onSearch = () => {
       color: #666;
     }
   }
-  /deep/.el-input-group__append {
+  :deep(.el-input__wrapper) {
+    background-color: var(--el-fill-color-light);
+  }
+  :deep(.el-input-group__append) {
     background-color: var(--el-color-primary);
     padding: 0 16px;
     color: #fff;
+    box-shadow: none;
   }
 }
 .el-table {
   margin-top: 20px;
-  /deep/th.el-table__cell {
+  :deep(th.el-table__cell) {
     background-color: var(--el-color-info-light-9);
   }
 }

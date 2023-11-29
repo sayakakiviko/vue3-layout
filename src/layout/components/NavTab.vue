@@ -49,7 +49,7 @@ const removeTab = (key) => {
   height: 40px;
   padding: 0 20px;
   background-color: var(--el-color-white);
-  /deep/.el-tabs {
+  :deep(.el-tabs) {
     --el-tabs-header-height: 26px;
     margin-top: 13px;
     .el-tabs__nav-next,

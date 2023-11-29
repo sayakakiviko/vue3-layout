@@ -60,7 +60,7 @@ const isCollapse = ref(false); //是否折叠菜单
   .el-menu {
     height: calc(100vh - 90px);
     border-right: none;
-    /deep/.el-menu-item.is-active {
+    :deep(.el-menu-item.is-active) {
       background-color: var(--el-color-primary-light-9);
     }
   }

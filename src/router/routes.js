@@ -35,7 +35,7 @@ const routes = [
         name: 'Hello',
         redirect: '/hello/index',
         // component: () => import('@/views/hello.vue'), // 路由懒加载
-        meta: { title: '你好', icon: 'setting', keepAlive: true },
+        meta: { title: 'hello', icon: 'setting', keepAlive: true },
         menu: true,
         children: [
           {
@@ -43,6 +43,7 @@ const routes = [
             name: 'Hello',
             component: () => import('@/views/hello.vue'), // 路由懒加载
             meta: {
+              keepAlive: true,
               title: '你好',
               icon: 'document',
               breadcrumb: [
@@ -52,7 +53,6 @@ const routes = [
                   name: 'Hello',
                 },
               ],
-              keepAlive: true,
             },
             menu: true,
           },
@@ -61,6 +61,7 @@ const routes = [
             name: 'Demo',
             component: () => import('@/views/demo.vue'), // 路由懒加载
             meta: {
+              keepAlive: true,
               title: '演示',
               breadcrumb: [
                 { title: 'hello', name: 'Hello' },
@@ -69,7 +70,6 @@ const routes = [
                   name: 'Demo',
                 },
               ],
-              keepAlive: false,
             },
             menu: true,
           },
