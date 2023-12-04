@@ -5,9 +5,13 @@
   >
     <el-breadcrumb style="line-height: 30px" :separator-icon="ArrowRight">
       <el-breadcrumb-item
-        v-for="item in useBreadcrumbStore().breadcrumb"
+        v-for="item in breadcrumbStore.breadcrumb"
         :key="item.title"
-        :to="item.name ? { name: item.name } : null"
+        :to="
+          item.name && index < breadcrumbStore.breadcrumb.length - 1
+            ? { name: item.name }
+            : null
+        "
       >
         {{ item.title }}
       </el-breadcrumb-item>
@@ -18,6 +22,8 @@
 <script setup>
 import { ArrowRight } from '@element-plus/icons-vue';
 import { useBreadcrumbStore } from '@/store';
+
+const breadcrumbStore = useBreadcrumbStore();
 </script>
 
 <style scoped lang="less">

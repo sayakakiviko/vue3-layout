@@ -1,7 +1,6 @@
 <!--首页-->
 <template>
   <div class="home page-wrap">
-    home
     <el-button
       type="primary"
       v-permission="['admin']"
@@ -10,7 +9,7 @@
       该按钮仅管理员可见
     </el-button>
     <!--表格-->
-    <div class="table-box">
+    <div style="height: 600px">
       <ProTable
         border
         rowKey="number"
@@ -23,6 +22,12 @@
         <template #expand>展开插槽</template>
         <template #number="scope">
           <el-link type="primary">{{ scope.row.number }}</el-link>
+        </template>
+        <template #handle>
+          <el-space>
+            <el-link type="primary">编辑</el-link>
+            <el-link type="danger">删除</el-link>
+          </el-space>
         </template>
       </ProTable>
     </div>
@@ -47,12 +52,13 @@ const tableColumns = [
   {
     type: 'radio', //与复选互斥
     label: '单选',
+    align: 'center',
     width: 55,
   },
-  {
-    type: 'expand',
-    label: '',
-  },
+  // {
+  //   type: 'expand',
+  //   label: '',
+  // },
   {
     type: 'index',
     label: '序号',
@@ -61,10 +67,12 @@ const tableColumns = [
   {
     prop: 'number',
     label: '编号',
+    filter: 'input',
   },
   {
     prop: 'name',
     label: '姓名',
+    filter: 'select',
     // width: 800,
     // fixed: true,
   },
@@ -72,20 +80,57 @@ const tableColumns = [
     prop: 'age',
     label: '年龄',
   },
+  {
+    prop: 'time',
+    label: '创建时间',
+    filter: 'date',
+  },
+  {
+    prop: 'handle',
+    label: '操作',
+    fixed: 'right',
+    // width: 250,
+  },
 ];
 const tableData = [
   {
     number: '001',
     name: '张三',
     age: 18,
+    time: '2023-12-01',
+    children: [
+      {
+        number: '002',
+        name: '王五',
+        age: 19,
+        time: '2023-12-01',
+        children: [
+          {
+            number: '005',
+            name: '老六',
+            age: 20,
+            time: '2023-12-01',
+            children: [],
+          },
+        ],
+      },
+      {
+        number: '003',
+        name: '狗蛋',
+        age: 20,
+        time: '2023-12-01',
+        children: [],
+      },
+    ],
   },
 ];
 
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 20; i++) {
   tableData.push({
     number: i,
     name: '李四',
     age: 20,
+    time: '2023-12-04',
   });
 }
 
@@ -117,8 +162,4 @@ const submit = (fileList) => {
 };
 </script>
 
-<style lang="less" scoped>
-.table-box {
-  height: 600px;
-}
-</style>
+<style lang="less" scoped></style>
