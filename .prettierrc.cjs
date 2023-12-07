@@ -15,4 +15,5 @@ module.exports = {
   vueIndentScriptAndStyle: false, //不对vue中的script及style标签缩进
   endOfLine: 'crlf', //结束行形式
   embeddedLanguageFormatting: 'auto', //对引用代码进行格式化
+  "printWidth": 100, // 超过最大字符换行
 };

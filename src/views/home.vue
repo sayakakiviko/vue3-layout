@@ -1,21 +1,21 @@
 <!--首页-->
 <template>
   <div class="home page-wrap">
-    <el-button
-      type="primary"
-      v-permission="['admin']"
-      @click="dialogShow = true"
-    >
+    <el-button type="primary" v-permission="['admin']" @click="dialogShow = true">
       该按钮仅管理员可见
     </el-button>
     <!--表格-->
-    <div style="height: 600px">
+    <div style="height: 620px">
       <ProTable
         border
+        isSearch
+        isPagination
         rowKey="number"
         ref="proTable"
         :tableData="tableData"
         :tableColumns="tableColumns"
+        :pagination="page"
+        @pageChange="pageChange"
         @selectionChange="selectionChange"
         @radioChange="radioChange"
       >
@@ -33,12 +33,7 @@
     </div>
   </div>
 
-  <UploadDialog
-    isSingle
-    :isShow="dialogShow"
-    @close="dialogShow = false"
-    @submit="submit"
-  />
+  <UploadDialog isSingle :isShow="dialogShow" @close="dialogShow = false" @submit="submit" />
 </template>
 
 <script setup name="Home">
@@ -59,6 +54,7 @@ const tableColumns = [
   //   type: 'expand',
   //   label: '',
   // },
+  //树状表格不建议使用序号
   {
     type: 'index',
     label: '序号',
@@ -89,56 +85,98 @@ const tableColumns = [
     prop: 'handle',
     label: '操作',
     fixed: 'right',
-    // width: 250,
+    width: 200,
   },
 ];
-const tableData = [
+const tableData = ref([]);
+const page = reactive({
+  pageNum: 1, //当前页
+  pageSize: 10, //每页数
+  total: 21, //数据总量
+  fullData: true, //全量数据返回
+});
+tableData.value = [
   {
     number: '001',
     name: '张三',
     age: 18,
     time: '2023-12-01',
-    children: [
-      {
-        number: '002',
-        name: '王五',
-        age: 19,
-        time: '2023-12-01',
-        children: [
-          {
-            number: '005',
-            name: '老六',
-            age: 20,
-            time: '2023-12-01',
-            children: [],
-          },
-        ],
-      },
-      {
-        number: '003',
-        name: '狗蛋',
-        age: 20,
-        time: '2023-12-01',
-        children: [],
-      },
-    ],
+    // children: [
+    //   {
+    //     number: '002',
+    //     name: '王五',
+    //     age: 19,
+    //     time: '2023-12-01',
+    //     children: [
+    //       {
+    //         number: '005',
+    //         name: '老六',
+    //         age: 20,
+    //         time: '2023-12-01',
+    //         children: [],
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     number: '003',
+    //     name: '狗蛋',
+    //     age: 20,
+    //     time: '2023-12-01',
+    //     children: [],
+    //   },
+    // ],
   },
 ];
-
-for (let i = 0; i < 20; i++) {
-  tableData.push({
+for (let i = 0; i < 18; i++) {
+  tableData.value.push({
     number: i,
     name: '李四',
     age: 20,
     time: '2023-12-04',
   });
 }
+tableData.value.push(
+  {
+    number: 25,
+    name: '王五',
+    age: 25,
+    time: '2023-12-05',
+  },
+  {
+    number: 26,
+    name: '老六',
+    age: 26,
+    time: '2023-12-06',
+  },
+);
 
 onMounted(() => {
   //直接使用element表格的属性、方法
   console.log(proTable.value.element.stripe);
+  getData();
 });
 
+/**
+ * 表格复选框勾选
+ * @list {array} 选择的数据
+ * */
+const getData = () => {
+  window.$api.demo.getList({ id: 12, currentPage: page.pageNum }).then((res) => {
+    tableData.value = res.data.list;
+    page.total = res.data.total;
+    page.fullData = res.data.list === res.data.total;
+  });
+};
+/**
+ * 分页
+ * @pageNum {number} 页码
+ * @pageSize {number} 每页显示数
+ * */
+const pageChange = (pageNum, pageSize) => {
+  page.pageNum = pageNum;
+  page.pageSize = pageSize;
+  getData();
+};
 /**
  * 表格复选框勾选
  * @list {array} 选择的数据

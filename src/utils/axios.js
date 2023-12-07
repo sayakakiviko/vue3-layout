@@ -48,9 +48,7 @@ axios.interceptors.response.use(
       return response.data;
     }
 
-    // 弹出提示
-    console.log('response：', response);
-    return response;
+    return response.data;
   },
   (error) => {
     if (error.response && error.response.data) {

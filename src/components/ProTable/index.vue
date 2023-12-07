@@ -3,6 +3,18 @@
  -->
 <template>
   <div class="pro-table" v-loading="data.loading">
+    <!--搜索-->
+    <section class="search">
+      <el-input
+        v-if="isSearch"
+        v-model.trim="data.searchValue"
+        placeholder="请输入内容"
+        :suffix-icon="Search"
+        @change="searchTable"
+        clearable
+      />
+    </section>
+    <!--表格-->
     <el-table
       ref="tableRef"
       v-bind="$attrs"
@@ -41,12 +53,7 @@
           <!-- 表头筛选 -->
           <template #header="scope" v-if="item.filter">
             <span>{{ scope.column.label }}</span>
-            <el-popover
-              placement="bottom-start"
-              :width="260"
-              :hide-after="10"
-              trigger="click"
-            >
+            <el-popover placement="bottom-start" :width="260" :hide-after="10" trigger="click">
               <template #reference>
                 <el-link class="filter-btn" :underline="false">
                   <el-icon size="12"><ArrowDownBold /></el-icon>
@@ -56,28 +63,28 @@
                 <div class="filter-top">
                   <div class="sub-title">
                     快捷操作
-                    <el-link
-                      class="title-btn"
-                      type="primary"
-                      :underline="false"
-                      @click="onSort(scope.column.property, null)"
-                    >
-                      清空
-                    </el-link>
+                    <!--<el-link-->
+                    <!--  class="title-btn"-->
+                    <!--  type="primary"-->
+                    <!--  :underline="false"-->
+                    <!--  @click="onSort(scope.column, null)"-->
+                    <!--&gt;-->
+                    <!--  清空-->
+                    <!--</el-link>-->
                   </div>
                   <el-link
                     class="block-btn"
-                    :class="{ 'active-color': data.activeSort === 1 }"
+                    :class="{ 'active-color': scope.column.activeSort === 1 }"
                     :underline="false"
-                    @click="onSort(scope.column.property, 'ascending')"
+                    @click="onSort(scope.column, 'ascending', true)"
                   >
                     <el-icon><SortUp /></el-icon>
                     升序排列
                   </el-link>
                   <el-link
-                    :class="{ 'active-color': data.activeSort === 2 }"
+                    :class="{ 'active-color': scope.column.activeSort === 2 }"
                     :underline="false"
-                    @click="onSort(scope.column.property, 'descending')"
+                    @click="onSort(scope.column, 'descending', true)"
                   >
                     <el-icon><SortDown /></el-icon>
                     降序排列
@@ -86,14 +93,14 @@
                 <div class="filter-bottom">
                   <div class="sub-title">
                     筛选条件
-                    <el-link
-                      class="title-btn"
-                      type="primary"
-                      :underline="false"
-                      @click="clearFilter(scope.column, item, item.filter)"
-                    >
-                      清空
-                    </el-link>
+                    <!--<el-link-->
+                    <!--  class="title-btn"-->
+                    <!--  type="primary"-->
+                    <!--  :underline="false"-->
+                    <!--  @click="clearFilter(scope.column, item, item.filter)"-->
+                    <!--&gt;-->
+                    <!--  清空-->
+                    <!--</el-link>-->
                   </div>
                   <div class="sub-section">{{ scope.column.label }}筛选</div>
                   <!-- 选择 -->
@@ -127,7 +134,8 @@
                     v-else-if="item.filter === 'input'"
                     :placeholder="'请输入' + item.label"
                     v-model="scope.column.filteredValue"
-                    @input="inputSearch(scope.column, item, item.filter)"
+                    clearable
+                    @input="inputFilter(scope.column, item, item.filter)"
                   ></el-input>
                 </div>
               </div>
@@ -155,16 +163,26 @@
       </template>
     </el-table>
     <!--分页-->
-    <el-pagination
-      v-if="pagination"
-      layout="prev, pager, next"
-      :total="50"
-      background
-    />
+    <section class="pagination">
+      <el-pagination
+        v-if="isPagination"
+        v-model:current-page="pageable.pageNum"
+        v-model:page-size="pageable.pageSize"
+        :total="pagination.total"
+        layout="total, sizes, prev, pager, next"
+        :page-sizes="[10, 20, 50, 100]"
+        @size-change="sizeChange"
+        @current-change="currentChange"
+        background
+        small
+      />
+    </section>
   </div>
 </template>
 
 <script setup name="proTable">
+import { Search } from '@element-plus/icons-vue';
+
 const props = defineProps({
   //是否展示边框线
   border: {
@@ -176,8 +194,13 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  //是否需要搜索
+  isSearch: {
+    type: Boolean,
+    default: false,
+  },
   //是否需要分页
-  pagination: {
+  isPagination: {
     type: Boolean,
     default: false,
   },
@@ -196,51 +219,89 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  //分页
+  pagination: {
+    type: Object,
+    default: () => {
+      return {
+        pageSize: 10, //每页显示数
+        pageNum: 1, //当前页码
+        total: 0, //数据总量
+        fullData: false, //是否全量数据返回
+      };
+    },
+  },
 });
 
 let timer = null; // 维护一个 timer
 const tableRef = ref(null); //表格ref
 const data = reactive({
   loading: false, //加载状态
-  activeSort: 0, //排序激活项
-  showTableData: props.tableData, //实际展示的表格
   radio: '', //单选值
+  searchValue: '', //搜索内容
+  sortColumn: {}, //激活排序的列
+  filterCollect: {}, //筛选的列及值
+  showTableData: [], //实际展示的表格
 });
 
 /** 表头筛选有下拉框的情况 */
 watch(
   () => props.tableData,
   (val) => {
-    props.tableColumns.map((column) => {
-      //有筛选
-      if (column.filter) {
-        //下拉框筛选
-        if (column.filter === 'select') {
-          column.filterList = []; //下拉列表
-          // column.filterVal = [];
-          val.map((item) => {
-            column.filterList.push(item[column.prop]);
-          });
-          column.filterList = Array.from(new Set(column.filterList));
-        }
-      }
+    if (props.isPagination && props.pagination.fullData) {
+      //若是有分页且全量数据返回了数据，则做前端分页
+      data.showTableData = val.slice(0, props.pagination.pageSize);
+    } else {
+      data.showTableData = val;
+    }
+
+    nextTick(() => {
+      getSelectOptions(data.showTableData);
     });
   },
   { deep: true, immediate: true },
 );
 
+const pageable = computed(() => props.pagination); //分页器
+
+/**
+ * 获取筛选的下拉选项
+ * @list {array} 当前页的表格数据
+ */
+const getSelectOptions = (list) => {
+  props.tableColumns.map((column) => {
+    //有筛选
+    if (column.filter && column.filter === 'select') {
+      //下拉框筛选
+      column.filterList = []; //下拉列表
+      // column.filterVal = [];
+      list.map((item) => {
+        column.filterList.push(item[column.prop]);
+      });
+      column.filterList = Array.from(new Set(column.filterList));
+    }
+  });
+};
 /**
  * 排序
- * @prop {string} 排序的列
+ * @prop {string} 排序的列的
  * @type {string} ascending升序，descending降序，null清空排序
+ * @flag {boolean} 是否是点击进来的
  */
-const onSort = (prop, type) => {
+const onSort = (column, type, flag) => {
+  //重复点击同一排序
+  if (column.order === type && flag) {
+    tableRef.value.clearSort();
+    column.activeSort = 0;
+    return false;
+  }
+
+  data.sortColumn.activeSort = 0; //清空上一个设置的排序列
+  tableRef.value.clearSort();
   //颜色激活
-  type
-    ? (data.activeSort = (type === 'ascending' && 1) || 2)
-    : (data.activeSort = 0);
-  //排序方法
-  tableRef.value.sort(prop, type);
+  type ? (column.activeSort = (type === 'ascending' && 1) || 2) : (column.activeSort = 0);
+  tableRef.value.sort(column.property, type); //排序方法
+  data.sortColumn = column; //赋值当前列
 };
 /**
  * 文本框的筛选
@@ -248,7 +309,7 @@ const onSort = (prop, type) => {
  * @info {object} 筛选的列的数据
  * @filterType {string} 筛选类型。select。date
  */
-const inputSearch = (column, info, filterType) => {
+const inputFilter = (column, info, filterType) => {
   clearTimeout(timer);
   timer = setTimeout(() => {
     changeFilter(column, info, filterType);
@@ -258,94 +319,172 @@ const inputSearch = (column, info, filterType) => {
  * 下拉框、时间的筛选
  * @column {object} 筛选的列
  * @info {object} 筛选的列的数据
- * @filterType {string} 筛选类型。select。date
+ * @filterType {string} 筛选类型。input，select。date
  */
 const changeFilter = (column, info, filterType) => {
   info.filterVal = column.filteredValue; //选择的值
   data.showTableData = [];
-  let filterCollect = []; //筛选的列的值
 
-  props.tableColumns.map((column) => {
-    if (column.filterVal && column.filterVal.length) {
-      filterCollect.push({
-        key: column.prop,
-        value: column.filterVal,
+  //筛选的列的值
+  data.filterCollect[column.property] = {
+    key: column.property,
+    value: column.filteredValue,
+    filterType,
+  };
+  let filterCollect = Object.values(data.filterCollect); //对象的值转数组
+
+  if (props.isPagination && pageable.value.fullData) {
+    //前端分页时的筛选
+    const startIndex = (pageable.value.pageNum - 1) * pageable.value.pageSize;
+    let list = props.tableData.slice(startIndex, startIndex + pageable.value.pageSize); //当前页的数据
+    let tempList = [list]; //过滤过程中使用的临时二维数组
+
+    filterCollect.map((filter, index) => {
+      tempList[index + 1] = []; //下一轮过滤使用的数组
+
+      tempList[index].map((item) => {
+        //filter.key为列属性；filter.value为筛选输入、选择的值；filter.filterType筛选类型
+        let flag = true; //数据是否展示
+        switch (filter.filterType) {
+          case 'input':
+            var columnsValue = item[filter.key] + ''; //该列各行的值，统一转为字符串
+            columnsValue.length && (flag = columnsValue.includes(filter.value)); //有筛选值才做判断
+            break;
+          case 'select':
+            filter.value.length && (flag = filter.value.includes(item[filter.key])); //有筛选值才做判断
+            break;
+          case 'date':
+            //有筛选值才做判断
+            if (filter.value) {
+              var startTime = new Date(filter.value[0]).getTime(); //开始时间，00:00:00
+              var endTime = filter.value[1]; //结束时间，23:59:59
+              // var endTime = new Date(filter.value[1]).getTime(); //结束时间,23:59:59
+              var dataDate = new Date(item[filter.key]).getTime();
+
+              //结束时间到结束日期的23:59:59
+              endTime = new Date(
+                endTime.getFullYear(),
+                endTime.getMonth(),
+                endTime.getDate(),
+                23,
+                59,
+                59,
+              ).getTime();
+              flag = startTime <= dataDate && endTime >= dataDate;
+            }
+            break;
+        }
+        flag && tempList[index + 1].push(item); //将当前轮过滤到的数据存放到下一轮的数组里
       });
-    }
-  });
-
-  props.tableData.map((item) => {
-    let flag = true; //数据是否展示
-    filterCollect.map((filter) => {
-      //filter.key为列属性，filter.value为筛选输入、选择的值
-      switch (filterType) {
-        case 'input':
-          var columnsValue = item[filter.key] + ''; //该列各行的值，统一转为字符串
-          !columnsValue.includes(filter.value) && (flag = false);
-          break;
-        case 'select':
-          !filter.value.includes(item[filter.key]) && (flag = false);
-          break;
-        case 'date':
-          var startTime = new Date(filter.value[0]).getTime(); //开始时间，00:00:00
-          var endTime = filter.value[1]; //结束时间，23:59:59
-          // var endTime = new Date(filter.value[1]).getTime(); //结束时间,23:59:59
-          var dataDate = new Date(item[filter.key]).getTime();
-
-          //结束时间到结束日期的23:59:59
-          endTime = new Date(
-            endTime.getFullYear(),
-            endTime.getMonth(),
-            endTime.getDate(),
-            23,
-            59,
-            59,
-          ).getTime();
-          !(startTime <= dataDate && endTime >= dataDate) && (flag = false);
-          break;
-      }
     });
-    flag && data.showTableData.push(item);
+    data.showTableData = tempList[tempList.length - 1]; //显示过滤后的数据
+  } else {
+    let tempList = [props.tableData]; //过滤过程中使用的临时二维数组
+
+    filterCollect.map((filter, index) => {
+      tempList[index + 1] = []; //下一轮过滤使用的数组
+
+      tempList[index].map((item) => {
+        //filter.key为列属性；filter.value为筛选输入、选择的值；filter.filterType筛选类型
+        let flag = true; //数据是否展示
+        switch (filter.filterType) {
+          case 'input':
+            var columnsValue = item[filter.key] + ''; //该列各行的值，统一转为字符串
+            columnsValue.length && (flag = columnsValue.includes(filter.value)); //有筛选值才做判断
+            break;
+          case 'select':
+            filter.value.length && (flag = filter.value.includes(item[filter.key])); //有筛选值才做判断
+            break;
+          case 'date':
+            //有筛选值才做判断
+            if (filter.value) {
+              var startTime = new Date(filter.value[0]).getTime(); //开始时间，00:00:00
+              var endTime = filter.value[1]; //结束时间，23:59:59
+              // var endTime = new Date(filter.value[1]).getTime(); //结束时间,23:59:59
+              var dataDate = new Date(item[filter.key]).getTime();
+
+              //结束时间到结束日期的23:59:59
+              endTime = new Date(
+                endTime.getFullYear(),
+                endTime.getMonth(),
+                endTime.getDate(),
+                23,
+                59,
+                59,
+              ).getTime();
+              flag = startTime <= dataDate && endTime >= dataDate;
+            }
+            break;
+        }
+        flag && tempList[index + 1].push(item); //将当前轮过滤到的数据存放到下一轮的数组里
+      });
+    });
+    data.showTableData = tempList[tempList.length - 1]; //显示过滤后的数据
+  }
+
+  //若有排序需保持排序
+  nextTick(() => {
+    column.order && onSort(column, column.order);
+    data.sortColumn.order && onSort(data.sortColumn, data.sortColumn.order);
   });
 };
 /**
- * 清空筛选
- * @column {object} 筛选的列
- * @info {object} 筛选的列的数据
- * @filterType {string} 筛选类型。select。date
+ * 清空所有的筛选及排序
  */
-const clearFilter = (column, info, filterType) => {
-  column.filteredValue = [];
-  info.filterVal = [];
-  data.showTableData = [];
-  let filterCollect = [];
+const clearFilterAll = () => {
+  //清空排序
+  tableRef.value.clearSort();
+  data.sortColumn.activeSort = 0;
+  data.sortColumn = {}; //激活排序的列
 
+  //清空筛选
+  data.filterCollect = {}; //筛选的列及值
   props.tableColumns.map((column) => {
-    if (column.filterVal && column.filterVal.length > 0) {
-      filterCollect.push({
-        key: column.prop,
-        value: column.filterVal,
-      });
-    }
-  });
-
-  props.tableData.map((item) => {
-    let flag = true; //数据是否展示
-    filterCollect.map((filter) => {
-      switch (filterType) {
-        case 'input':
-          !(item[filter.key].indexOf(filter.value) > -1) && (flag = false);
-          break;
-        case 'select':
-          !filter.value.includes(item[filter.key]) && (flag = false);
-          break;
-      }
-    });
-    flag && data.showTableData.push(item);
+    column.filterVal = '';
+    column.filteredValue = [];
   });
 };
+/**
+ * 搜索表格
+ */
+const searchTable = () => {
+  emit('searchTable', data.searchValue);
+};
+/**
+ * page-size 改变时触发
+ * @val {number} 每页显示数
+ */
+const sizeChange = (val) => {
+  //全量数据返回，前端分页
+  if (pageable.value.fullData) {
+    data.showTableData = props.tableData.slice(0, val);
+    getSelectOptions(data.showTableData);
+  }
 
-const emit = defineEmits(['selectionChange', 'radioChange']);
+  pageable.value.pageSize = val;
+  pageable.value.pageNum = 1; //改变每页显示数后，重置页码
+  emit('pageChange', pageable.value.pageNum, pageable.value.pageSize); //当前页，每页显示数
+  clearFilterAll();
+};
+/**
+ * current-page 改变时触发
+ * @val {number} 当前页码
+ */
+const currentChange = (val) => {
+  //全量数据返回，前端分页
+  if (pageable.value.fullData) {
+    const startIndex = (val - 1) * pageable.value.pageSize; //计算截取的数据的初始位置
+    //截取对应页码的数据
+    data.showTableData = props.tableData.slice(startIndex, startIndex + pageable.value.pageSize);
+    getSelectOptions(data.showTableData);
+  }
+
+  pageable.value.pageNum = val;
+  emit('pageChange', pageable.value.pageNum, pageable.value.pageSize); //当前页，每页显示数
+  clearFilterAll();
+};
+
+const emit = defineEmits(['selectionChange', 'radioChange', 'searchTable', 'pageChange']);
 defineExpose({
   element: tableRef,
 });
@@ -358,12 +497,24 @@ defineExpose({
   flex-direction: column;
   width: 100%;
   height: 100%;
+  .search {
+    margin-bottom: 16px;
+    text-align: right;
+    .el-input {
+      width: 220px;
+    }
+  }
   :deep(.el-table tr th) {
     background: var(--el-fill-color-light);
     color: #333;
   }
   :deep(.el-table__column-filter-trigger) {
     display: none;
+  }
+  .pagination {
+    display: flex;
+    justify-content: end;
+    margin-top: 16px;
   }
 }
 .table-filter-box {

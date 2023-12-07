@@ -13,6 +13,10 @@ const demo = {
   getData(param, config) {
     return get('/api/get.favicon', param, config);
   },
+  //query传参
+  getList(param, config) {
+    return get('/m1/1271886-0-default/getList', param, config);
+  },
   //post传参
   postTest(param, config) {
     return post('/api/get.favicon', param, config);
