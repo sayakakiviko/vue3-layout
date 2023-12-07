@@ -69,6 +69,7 @@ const tableColumns = [
     prop: 'name',
     label: '姓名',
     filter: 'select',
+    search: true, //该列是否可在顶部搜索框搜索出来（前端分页用）
     // width: 800,
     // fixed: true,
   },

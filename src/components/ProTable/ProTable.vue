@@ -4,16 +4,7 @@
 <template>
   <div class="pro-table" v-loading="data.loading">
     <!--搜索-->
-    <section class="search">
-      <el-input
-        v-if="isSearch"
-        v-model.trim="data.searchValue"
-        placeholder="请输入内容"
-        :suffix-icon="Search"
-        @change="searchTable"
-        clearable
-      />
-    </section>
+    <TableSearch v-if="isSearch" @searchTable="searchTable" />
     <!--表格-->
     <el-table
       ref="tableRef"
@@ -174,7 +165,7 @@
 
 <script setup name="proTable">
 import Pagination from './components/pagination.vue';
-import { Search } from '@element-plus/icons-vue';
+import TableSearch from './components/tableSearch.vue';
 
 const props = defineProps({
   //是否展示边框线
@@ -219,6 +210,7 @@ const props = defineProps({
 });
 
 let timer = null; // 维护一个 timer
+let searchTableData = []; //搜索框搜索出来的数据（前端分页用）
 const tableRef = ref(null); //表格ref
 const data = reactive({
   loading: false, //加载状态
@@ -226,6 +218,7 @@ const data = reactive({
   searchValue: '', //搜索内容
   sortColumn: {}, //激活排序的列
   filterCollect: {}, //筛选的列及值
+  searchColumns: [], //可被顶部搜索框搜索出来的列（前端分页用）
   showTableData: [], //实际展示的表格
 });
 
@@ -254,7 +247,9 @@ const pageable = computed(() => props.pagination); //分页器
  * @list {array} 当前页的表格数据
  */
 const getSelectOptions = (list) => {
+  data.searchColumns = []; //置空数据，避免push相同数据
   props.tableColumns.map((column) => {
+    column.search && data.searchColumns.push(column.prop); //可被顶部搜索框搜索出来的列
     //有筛选
     if (column.filter && column.filter === 'select') {
       //下拉框筛选
@@ -431,9 +426,30 @@ const clearFilterAll = () => {
 };
 /**
  * 搜索表格
+ * @value {string} 搜索内容
  */
-const searchTable = () => {
-  emit('searchTable', data.searchValue);
+const searchTable = (value) => {
+  clearFilterAll();
+  //前端分页情况
+  if (props.isPagination && props.pagination.fullData) {
+    searchTableData = [];
+    console.log(searchTableData);
+    props.tableData.map((item) => {
+      data.searchColumns.map((prop) => {
+        //匹配到搜索的数据
+        item[prop].includes(value) && searchTableData.push(item);
+      });
+    });
+
+    console.log(searchTableData);
+    //展示搜索到的数据
+    pageable.value.pageNum = 1; //重置页码
+    pageable.value.total = searchTableData.length; //设置数据总量
+    const startIndex = (pageable.value.pageNum - 1) * pageable.value.pageSize; //要截取的数据的初始下标
+    data.showTableData = searchTableData.slice(startIndex, startIndex + pageable.value.pageSize);
+  } else {
+    emit('searchTable', data.searchValue); //非前端分页的搜索需要调取接口
+  }
 };
 /**
  * page-size 改变时触发
@@ -442,7 +458,8 @@ const searchTable = () => {
 const sizeChange = (val) => {
   //全量数据返回，前端分页
   if (props.pagination.fullData) {
-    data.showTableData = props.tableData.slice(0, val);
+    let dataList = (searchTableData.length && searchTableData) || props.tableData; //有用框搜索数据
+    data.showTableData = dataList.slice(0, val);
     getSelectOptions(data.showTableData);
   }
 
@@ -459,8 +476,9 @@ const currentChange = (val) => {
   //全量数据返回，前端分页
   if (props.pagination.fullData) {
     const startIndex = (val - 1) * pageable.value.pageSize; //计算截取的数据的初始位置
+    let dataList = (searchTableData.length && searchTableData) || props.tableData; //有用框搜索数据
     //截取对应页码的数据
-    data.showTableData = props.tableData.slice(startIndex, startIndex + pageable.value.pageSize);
+    data.showTableData = dataList.slice(startIndex, startIndex + pageable.value.pageSize);
     getSelectOptions(data.showTableData);
   }
 
@@ -482,13 +500,6 @@ defineExpose({
   flex-direction: column;
   width: 100%;
   height: 100%;
-  .search {
-    margin-bottom: 16px;
-    text-align: right;
-    .el-input {
-      width: 220px;
-    }
-  }
   :deep(.el-table tr th) {
     background: var(--el-fill-color-light);
     color: #333;

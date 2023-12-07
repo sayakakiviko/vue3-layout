@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    '副本': typeof import('./src/components/ProTable/components/pagination - 副本.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']
@@ -54,6 +55,8 @@ declare module 'vue' {
     ProTable: typeof import('./src/components/ProTable/ProTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Search: typeof import('./src/components/ProTable/components/search.vue')['default']
+    TableSearch: typeof import('./src/components/ProTable/components/tableSearch.vue')['default']
     UploadDialog: typeof import('./src/components/uploadDialog.vue')['default']
   }
   export interface ComponentCustomProperties {
