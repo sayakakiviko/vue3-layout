@@ -163,24 +163,17 @@
       </template>
     </el-table>
     <!--分页-->
-    <section class="pagination">
-      <el-pagination
-        v-if="isPagination"
-        v-model:current-page="pageable.pageNum"
-        v-model:page-size="pageable.pageSize"
-        :total="pagination.total"
-        layout="total, sizes, prev, pager, next"
-        :page-sizes="[10, 20, 50, 100]"
-        @size-change="sizeChange"
-        @current-change="currentChange"
-        background
-        small
-      />
-    </section>
+    <Pagination
+      v-if="isPagination"
+      :pagination="pageable"
+      @sizeChange="sizeChange"
+      @currentChange="currentChange"
+    />
   </div>
 </template>
 
 <script setup name="proTable">
+import Pagination from './components/pagination.vue';
 import { Search } from '@element-plus/icons-vue';
 
 const props = defineProps({
@@ -222,14 +215,6 @@ const props = defineProps({
   //分页
   pagination: {
     type: Object,
-    default: () => {
-      return {
-        pageSize: 10, //每页显示数
-        pageNum: 1, //当前页码
-        total: 0, //数据总量
-        fullData: false, //是否全量数据返回
-      };
-    },
   },
 });
 
@@ -333,7 +318,7 @@ const changeFilter = (column, info, filterType) => {
   };
   let filterCollect = Object.values(data.filterCollect); //对象的值转数组
 
-  if (props.isPagination && pageable.value.fullData) {
+  if (props.isPagination && props.pagination.fullData) {
     //前端分页时的筛选
     const startIndex = (pageable.value.pageNum - 1) * pageable.value.pageSize;
     let list = props.tableData.slice(startIndex, startIndex + pageable.value.pageSize); //当前页的数据
@@ -456,14 +441,14 @@ const searchTable = () => {
  */
 const sizeChange = (val) => {
   //全量数据返回，前端分页
-  if (pageable.value.fullData) {
+  if (props.pagination.fullData) {
     data.showTableData = props.tableData.slice(0, val);
     getSelectOptions(data.showTableData);
   }
 
   pageable.value.pageSize = val;
   pageable.value.pageNum = 1; //改变每页显示数后，重置页码
-  emit('pageChange', pageable.value.pageNum, pageable.value.pageSize); //当前页，每页显示数
+  emit('pageChange', 1, pageable.value.pageSize); //当前页，每页显示数
   clearFilterAll();
 };
 /**
@@ -472,7 +457,7 @@ const sizeChange = (val) => {
  */
 const currentChange = (val) => {
   //全量数据返回，前端分页
-  if (pageable.value.fullData) {
+  if (props.pagination.fullData) {
     const startIndex = (val - 1) * pageable.value.pageSize; //计算截取的数据的初始位置
     //截取对应页码的数据
     data.showTableData = props.tableData.slice(startIndex, startIndex + pageable.value.pageSize);
@@ -480,7 +465,7 @@ const currentChange = (val) => {
   }
 
   pageable.value.pageNum = val;
-  emit('pageChange', pageable.value.pageNum, pageable.value.pageSize); //当前页，每页显示数
+  emit('pageChange', val, pageable.value.pageSize); //当前页，每页显示数
   clearFilterAll();
 };
 

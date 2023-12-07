@@ -153,7 +153,7 @@ tableData.value.push(
 onMounted(() => {
   //直接使用element表格的属性、方法
   console.log(proTable.value.element.stripe);
-  getData();
+  // getData();
 });
 
 /**
@@ -173,9 +173,9 @@ const getData = () => {
  * @pageSize {number} 每页显示数
  * */
 const pageChange = (pageNum, pageSize) => {
-  page.pageNum = pageNum;
-  page.pageSize = pageSize;
-  getData();
+  // page.pageNum = pageNum;
+  // page.pageSize = pageSize;
+  // getData();
 };
 /**
  * 表格复选框勾选

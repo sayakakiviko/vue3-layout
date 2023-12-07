@@ -7,7 +7,6 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    Components: typeof import('./src/components/ProTable/components/index.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']
@@ -51,11 +50,10 @@ declare module 'vue' {
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElText: typeof import('element-plus/es')['ElText']
     ElUpload: typeof import('element-plus/es')['ElUpload']
-    Filter: typeof import('./src/components/ProTable/components/filter.vue')['default']
-    ProTable: typeof import('./src/components/ProTable/index.vue')['default']
+    Pagination: typeof import('./src/components/ProTable/components/pagination.vue')['default']
+    ProTable: typeof import('./src/components/ProTable/ProTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    TableColumn: typeof import('./src/components/ProTable/components/TableColumn.vue')['default']
     UploadDialog: typeof import('./src/components/uploadDialog.vue')['default']
   }
   export interface ComponentCustomProperties {
