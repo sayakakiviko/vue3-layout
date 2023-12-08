@@ -1,8 +1,98 @@
 <!--
-    name：表格组件
+    名称：表格组件
+    属性：见props
+    输出方法：
+      selectionChange 复选框发生变化时会触发该事件，返回数组_选择的数据列表；
+      radioChange 单选框发生变化时会触发该事件，返回对象_选择的数据；
+      searchTable 搜索框内容改变会触发该事件，非前端分页时返回字符串_搜索的关键字；注：为前端分页时，可不使用该方法。
+      pageChange 页码或每页显示数改变会触发该事件，返回参数1为数字_当前页码，返回参数2为数字_每页显示数；
+                 注：为前端分页时，可不使用该方法，但分页props-'pagination'还是要传，且fullData一定为true。
+
+    使用示例：
+      <ProTable
+        border
+        isSearch
+        isPagination
+        rowKey="number"
+        ref="proTable"
+        :tableData="tableData"
+        :tableColumns="tableColumns"
+        :pagination="page"
+        @pageChange="pageChange"
+        @selectionChange="selectionChange"
+        @radioChange="radioChange"
+      >
+        <template #expand>展开插槽，自定义填写的内容</template>
+        <template #number="scope">
+          <el-link type="primary">{{ scope.row.number }}</el-link>
+        </template>
+        <template #name="scope">
+          <el-input
+            v-if="scope.row.status === 'edit'"
+            v-model.trim="scope.row.name"
+            placeholder="请输入"
+          />
+          <span v-else>{{ scope.row.name }}</span>
+        </template>
+        <template #handle="scope">
+          <el-space>
+            <el-link type="primary" @click="onEdit(scope.row)">编辑</el-link>
+            <el-link type="danger">删除</el-link>
+          </el-space>
+        </template>
+      </ProTable>
+
+      const tableColumns = [
+        // {
+        //   type: 'selection', //与单选互斥
+        //   label: '复选',
+        // },
+        {
+          type: 'radio', //与复选互斥
+          label: '单选',
+          align: 'center',
+          width: 55,
+        },
+        // {
+        //   type: 'expand',
+        //   label: '',
+        // },
+        //树状表格不建议使用序号
+        {
+          type: 'index',
+          label: '序号',
+          width: 70,
+        },
+        {
+          prop: 'number',
+          label: '编号',
+          filter: 'input', //筛选类型。input/select/date
+        },
+        {
+          prop: 'name',
+          label: '姓名',
+          filter: 'select',
+          search: true, //该列是否可在顶部搜索框搜索出来（前端分页用）
+        },
+        {
+          prop: 'age',
+          label: '年龄',
+        },
+        {
+          prop: 'time',
+          label: '创建时间',
+          filter: 'date',
+        },
+        {
+          prop: 'handle',
+          label: '操作',
+          fixed: 'right',
+          width: 200,
+        },
+      ];
  -->
 <template>
-  <div class="pro-table" v-loading="data.loading">
+  <div class="pro-table">
     <!--搜索-->
     <TableSearch v-if="isSearch" @searchTable="searchTable" />
     <!--表格-->
@@ -33,7 +123,7 @@
               v-if="item.type === 'radio'"
               v-model="data.radio"
               :label="scope.row[rowKey]"
-              @change="emit('radioChange', data.radio)"
+              @change="emit('radioChange', scope.row)"
             >
               <i></i>
             </el-radio>
@@ -188,7 +278,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  //行数据的 Key，用来优化 Table 的渲染，当表格数据多选时，所指定的 id ==> 非必传（默认为 id）
+  //行数据的 Key，用来优化 Table 的渲染。单选时需要传入rowKey，唯一值，如id、编号
   rowKey: {
     type: String,
     default: 'id',
@@ -206,6 +296,14 @@ const props = defineProps({
   //分页
   pagination: {
     type: Object,
+    default: () => {
+      return {
+        pageSize: 10, //每页显示数
+        pageNum: 1, //当前页码
+        total: 0, //数据总量
+        fullData: false, //是否全量数据返回
+      };
+    },
   },
 });
 
@@ -213,7 +311,6 @@ let timer = null; // 维护一个 timer
 let searchTableData = []; //搜索框搜索出来的数据（前端分页用）
 const tableRef = ref(null); //表格ref
 const data = reactive({
-  loading: false, //加载状态
   radio: '', //单选值
   searchValue: '', //搜索内容
   sortColumn: {}, //激活排序的列
@@ -227,7 +324,8 @@ watch(
   (val) => {
     if (props.isPagination && props.pagination.fullData) {
       //若是有分页且全量数据返回了数据，则做前端分页
-      data.showTableData = val.slice(props.pagination.pageNum - 1 || 0, props.pagination.pageSize);
+      const startIndex = (props.pagination.pageNum - 1) * props.pagination.pageSize; //计算截取的数据的初始位置
+      data.showTableData = val.slice(startIndex, startIndex + props.pagination.pageSize);
     } else {
       data.showTableData = val;
     }

@@ -186,6 +186,7 @@ const getData = () => {
  * */
 const changeTableData = (row) => {
   console.log(row);
+  row.status = 'normal';
 };
 /**
  * 分页
