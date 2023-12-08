@@ -222,17 +222,17 @@ const data = reactive({
   showTableData: [], //实际展示的表格
 });
 
-/** 表头筛选有下拉框的情况 */
 watch(
   () => props.tableData,
   (val) => {
     if (props.isPagination && props.pagination.fullData) {
       //若是有分页且全量数据返回了数据，则做前端分页
-      data.showTableData = val.slice(0, props.pagination.pageSize);
+      data.showTableData = val.slice(props.pagination.pageNum - 1 || 0, props.pagination.pageSize);
     } else {
       data.showTableData = val;
     }
 
+    //表头筛选有下拉框的情况
     nextTick(() => {
       getSelectOptions(data.showTableData);
     });
@@ -311,95 +311,17 @@ const changeFilter = (column, info, filterType) => {
     value: column.filteredValue,
     filterType,
   };
-  let filterCollect = Object.values(data.filterCollect); //对象的值转数组
 
+  let tempList = [props.tableData]; //过滤过程中使用的临时二维数组
   if (props.isPagination && props.pagination.fullData) {
     //前端分页时的筛选
     const startIndex = (pageable.value.pageNum - 1) * pageable.value.pageSize;
     let list = props.tableData.slice(startIndex, startIndex + pageable.value.pageSize); //当前页的数据
-    let tempList = [list]; //过滤过程中使用的临时二维数组
+    tempList = [list]; //过滤过程中使用的临时二维数组
 
-    filterCollect.map((filter, index) => {
-      tempList[index + 1] = []; //下一轮过滤使用的数组
-
-      tempList[index].map((item) => {
-        //filter.key为列属性；filter.value为筛选输入、选择的值；filter.filterType筛选类型
-        let flag = true; //数据是否展示
-        switch (filter.filterType) {
-          case 'input':
-            var columnsValue = item[filter.key] + ''; //该列各行的值，统一转为字符串
-            columnsValue.length && (flag = columnsValue.includes(filter.value)); //有筛选值才做判断
-            break;
-          case 'select':
-            filter.value.length && (flag = filter.value.includes(item[filter.key])); //有筛选值才做判断
-            break;
-          case 'date':
-            //有筛选值才做判断
-            if (filter.value) {
-              var startTime = new Date(filter.value[0]).getTime(); //开始时间，00:00:00
-              var endTime = filter.value[1]; //结束时间，23:59:59
-              // var endTime = new Date(filter.value[1]).getTime(); //结束时间,23:59:59
-              var dataDate = new Date(item[filter.key]).getTime();
-
-              //结束时间到结束日期的23:59:59
-              endTime = new Date(
-                endTime.getFullYear(),
-                endTime.getMonth(),
-                endTime.getDate(),
-                23,
-                59,
-                59,
-              ).getTime();
-              flag = startTime <= dataDate && endTime >= dataDate;
-            }
-            break;
-        }
-        flag && tempList[index + 1].push(item); //将当前轮过滤到的数据存放到下一轮的数组里
-      });
-    });
-    data.showTableData = tempList[tempList.length - 1]; //显示过滤后的数据
+    filterRes(tempList);
   } else {
-    let tempList = [props.tableData]; //过滤过程中使用的临时二维数组
-
-    filterCollect.map((filter, index) => {
-      tempList[index + 1] = []; //下一轮过滤使用的数组
-
-      tempList[index].map((item) => {
-        //filter.key为列属性；filter.value为筛选输入、选择的值；filter.filterType筛选类型
-        let flag = true; //数据是否展示
-        switch (filter.filterType) {
-          case 'input':
-            var columnsValue = item[filter.key] + ''; //该列各行的值，统一转为字符串
-            columnsValue.length && (flag = columnsValue.includes(filter.value)); //有筛选值才做判断
-            break;
-          case 'select':
-            filter.value.length && (flag = filter.value.includes(item[filter.key])); //有筛选值才做判断
-            break;
-          case 'date':
-            //有筛选值才做判断
-            if (filter.value) {
-              var startTime = new Date(filter.value[0]).getTime(); //开始时间，00:00:00
-              var endTime = filter.value[1]; //结束时间，23:59:59
-              // var endTime = new Date(filter.value[1]).getTime(); //结束时间,23:59:59
-              var dataDate = new Date(item[filter.key]).getTime();
-
-              //结束时间到结束日期的23:59:59
-              endTime = new Date(
-                endTime.getFullYear(),
-                endTime.getMonth(),
-                endTime.getDate(),
-                23,
-                59,
-                59,
-              ).getTime();
-              flag = startTime <= dataDate && endTime >= dataDate;
-            }
-            break;
-        }
-        flag && tempList[index + 1].push(item); //将当前轮过滤到的数据存放到下一轮的数组里
-      });
-    });
-    data.showTableData = tempList[tempList.length - 1]; //显示过滤后的数据
+    filterRes(tempList);
   }
 
   //若有排序需保持排序
@@ -407,6 +329,52 @@ const changeFilter = (column, info, filterType) => {
     column.order && onSort(column, column.order);
     data.sortColumn.order && onSort(data.sortColumn, data.sortColumn.order);
   });
+};
+/**
+ * 筛选的副方法
+ * @tempList {array} 过滤过程中使用的临时二维数组
+ */
+const filterRes = (tempList) => {
+  let filterCollect = Object.values(data.filterCollect); //对象的值转数组
+  filterCollect.map((filter, index) => {
+    tempList[index + 1] = []; //下一轮过滤使用的数组
+
+    tempList[index].map((item) => {
+      //filter.key为列属性；filter.value为筛选输入、选择的值；filter.filterType筛选类型
+      let flag = true; //数据是否展示
+      switch (filter.filterType) {
+        case 'input':
+          var columnsValue = item[filter.key] + ''; //该列各行的值，统一转为字符串
+          columnsValue.length && (flag = columnsValue.includes(filter.value)); //有筛选值才做判断
+          break;
+        case 'select':
+          filter.value.length && (flag = filter.value.includes(item[filter.key])); //有筛选值才做判断
+          break;
+        case 'date':
+          //有筛选值才做判断
+          if (filter.value) {
+            var startTime = new Date(filter.value[0]).getTime(); //开始时间，00:00:00
+            var endTime = filter.value[1]; //结束时间，23:59:59
+            // var endTime = new Date(filter.value[1]).getTime(); //结束时间,23:59:59
+            var dataDate = new Date(item[filter.key]).getTime();
+
+            //结束时间到结束日期的23:59:59
+            endTime = new Date(
+              endTime.getFullYear(),
+              endTime.getMonth(),
+              endTime.getDate(),
+              23,
+              59,
+              59,
+            ).getTime();
+            flag = startTime <= dataDate && endTime >= dataDate;
+          }
+          break;
+      }
+      flag && tempList[index + 1].push(item); //将当前轮过滤到的数据存放到下一轮的数组里
+    });
+  });
+  data.showTableData = tempList[tempList.length - 1]; //显示过滤后的数据
 };
 /**
  * 清空所有的筛选及排序
@@ -433,7 +401,6 @@ const searchTable = (value) => {
   //前端分页情况
   if (props.isPagination && props.pagination.fullData) {
     searchTableData = [];
-    console.log(searchTableData);
     props.tableData.map((item) => {
       data.searchColumns.map((prop) => {
         //匹配到搜索的数据
@@ -441,7 +408,6 @@ const searchTable = (value) => {
       });
     });
 
-    console.log(searchTableData);
     //展示搜索到的数据
     pageable.value.pageNum = 1; //重置页码
     pageable.value.total = searchTableData.length; //设置数据总量

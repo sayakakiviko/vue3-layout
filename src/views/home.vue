@@ -23,9 +23,17 @@
         <template #number="scope">
           <el-link type="primary">{{ scope.row.number }}</el-link>
         </template>
-        <template #handle>
+        <template #name="scope">
+          <el-input
+            v-if="scope.row.status === 'edit'"
+            v-model.trim="scope.row.name"
+            placeholder="请输入"
+          />
+          <span v-else>{{ scope.row.name }}</span>
+        </template>
+        <template #handle="scope">
           <el-space>
-            <el-link type="primary">编辑</el-link>
+            <el-link type="primary" @click="changeTableData(scope.row)">编辑</el-link>
             <el-link type="danger">删除</el-link>
           </el-space>
         </template>
@@ -102,6 +110,7 @@ tableData.value = [
     name: '张三',
     age: 18,
     time: '2023-12-01',
+    status: 'normal',
     // children: [
     //   {
     //     number: '002',
@@ -134,6 +143,7 @@ for (let i = 0; i < 18; i++) {
     name: '李四',
     age: 20,
     time: '2023-12-04',
+    status: 'normal',
   });
 }
 tableData.value.push(
@@ -142,12 +152,14 @@ tableData.value.push(
     name: '王五',
     age: 25,
     time: '2023-12-05',
+    status: 'edit',
   },
   {
     number: 26,
     name: '老六',
     age: 26,
     time: '2023-12-06',
+    status: 'normal',
   },
 );
 
@@ -167,6 +179,13 @@ const getData = () => {
     page.total = res.data.total;
     page.fullData = res.data.list === res.data.total;
   });
+};
+/**
+ * 修改表格数据
+ * @row {object} 修改的行
+ * */
+const changeTableData = (row) => {
+  console.log(row);
 };
 /**
  * 分页
