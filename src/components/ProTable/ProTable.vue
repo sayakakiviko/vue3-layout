@@ -1,12 +1,13 @@
 <!--
-    名称：表格组件
-    属性：见props
+    名称：表格组件；如果你想使用 el-table 的任何属性、事件，通过属性透传都能支持，ProTable 组件内部暴露了 el-table DOM，可通过 proTable.value.element.方法名 调用他们
+    属性：详见props
+    插槽：自定义表头插槽为'header列的prop'；设置某列特殊样式插槽为'列的prop'；其他的与element plus表格组件插槽使用方法一致
     输出方法：
       selectionChange 复选框发生变化时会触发该事件，返回数组_选择的数据列表；
       radioChange 单选框发生变化时会触发该事件，返回对象_选择的数据；
       searchTable 搜索框内容改变会触发该事件，非前端分页时返回字符串_搜索的关键字；注：为前端分页时，可不使用该方法。
-      pageChange 页码或每页显示数改变会触发该事件，返回参数1为数字_当前页码，返回参数2为数字_每页显示数；
-                 注：为前端分页时，可不使用该方法，但分页props-'pagination'还是要传，且fullData一定为true。
+      pageChange 页码或每页显示数改变会触发该事件，返回参数1为数字_当前页码，返回参数2为数字_每页显示数；注：为前端分页时，可不使用该方法。
+                 前端分页开启方法：isPagination为true；pagination的fullData为true。
 
     使用示例：
       <ProTable
@@ -108,9 +109,9 @@
         }
       "
     >
-      <!-- 默认插槽 -->
-      <slot />
-      <template v-for="item in tableColumns" :key="item">
+      <template v-for="item in tableColumns" :key="item.prop">
+        <!-- 默认插槽 -->
+        <slot />
         <!--单选框/复选框/展开列/序号-->
         <el-table-column v-if="item.type" v-bind="item">
           <template #default="scope">
@@ -131,98 +132,108 @@
         </el-table-column>
         <!--其他列-->
         <el-table-column v-else show-overflow-tooltip v-bind="item">
-          <!-- 表头筛选 -->
-          <template #header="scope" v-if="item.filter">
-            <span>{{ scope.column.label }}</span>
-            <el-popover placement="bottom-start" :width="260" :hide-after="10" trigger="click">
-              <template #reference>
-                <el-link class="filter-btn" :underline="false">
-                  <el-icon size="12"><ArrowDownBold /></el-icon>
-                </el-link>
-              </template>
-              <div class="table-filter-box">
-                <div class="filter-top">
-                  <div class="sub-title">
-                    快捷操作
-                    <!--<el-link-->
-                    <!--  class="title-btn"-->
-                    <!--  type="primary"-->
-                    <!--  :underline="false"-->
-                    <!--  @click="onSort(scope.column, null)"-->
-                    <!--&gt;-->
-                    <!--  清空-->
-                    <!--</el-link>-->
-                  </div>
-                  <el-link
-                    class="block-btn"
-                    :class="{ 'active-color': scope.column.activeSort === 1 }"
-                    :underline="false"
-                    @click="onSort(scope.column, 'ascending', true)"
-                  >
-                    <el-icon><SortUp /></el-icon>
-                    升序排列
+          <template #header="scope">
+            <!-- 自定表头插槽 -->
+            <slot :name="'header' + item.prop" v-bind="scope">
+              {{ scope.column.label }}
+            </slot>
+            <!-- 表头筛选 -->
+            <template v-if="item.filter">
+              <el-popover placement="bottom-start" :width="260" :hide-after="10" trigger="click">
+                <template #reference>
+                  <el-link class="filter-btn" :underline="false">
+                    <el-icon size="12"><ArrowDownBold /></el-icon>
                   </el-link>
-                  <el-link
-                    :class="{ 'active-color': scope.column.activeSort === 2 }"
-                    :underline="false"
-                    @click="onSort(scope.column, 'descending', true)"
-                  >
-                    <el-icon><SortDown /></el-icon>
-                    降序排列
-                  </el-link>
-                </div>
-                <div class="filter-bottom">
-                  <div class="sub-title">
-                    筛选条件
-                    <!--<el-link-->
-                    <!--  class="title-btn"-->
-                    <!--  type="primary"-->
-                    <!--  :underline="false"-->
-                    <!--  @click="clearFilter(scope.column, item, item.filter)"-->
-                    <!--&gt;-->
-                    <!--  清空-->
-                    <!--</el-link>-->
+                </template>
+                <div class="table-filter-box">
+                  <div class="filter-top">
+                    <div class="sub-title">
+                      快捷操作
+                      <!--<el-link-->
+                      <!--  class="title-btn"-->
+                      <!--  type="primary"-->
+                      <!--  :underline="false"-->
+                      <!--  @click="onSort(scope.column, null)"-->
+                      <!--&gt;-->
+                      <!--  清空-->
+                      <!--</el-link>-->
+                    </div>
+                    <el-link
+                      class="block-btn"
+                      :class="{ 'active-color': scope.column.activeSort === 1 }"
+                      :underline="false"
+                      @click="onSort(scope.column, 'ascending', true)"
+                    >
+                      <el-icon><SortUp /></el-icon>
+                      升序排列
+                    </el-link>
+                    <el-link
+                      :class="{ 'active-color': scope.column.activeSort === 2 }"
+                      :underline="false"
+                      @click="onSort(scope.column, 'descending', true)"
+                    >
+                      <el-icon><SortDown /></el-icon>
+                      降序排列
+                    </el-link>
                   </div>
-                  <div class="sub-section">{{ scope.column.label }}筛选</div>
-                  <!-- 选择 -->
-                  <el-select
-                    v-if="item.filter === 'select'"
-                    v-model="scope.column.filteredValue"
-                    :teleported="false"
-                    multiple
-                    @change="changeFilter(scope.column, item, item.filter)"
-                  >
-                    <el-option
-                      v-for="(val, index) in item.filterList"
-                      :key="index"
-                      :value="val"
-                      :label="val"
+                  <div class="filter-bottom">
+                    <div class="sub-title">
+                      筛选条件
+                      <!--<el-link-->
+                      <!--  class="title-btn"-->
+                      <!--  type="primary"-->
+                      <!--  :underline="false"-->
+                      <!--  @click="clearFilter(scope.column, item, item.filter)"-->
+                      <!--&gt;-->
+                      <!--  清空-->
+                      <!--</el-link>-->
+                    </div>
+                    <div class="sub-section">{{ scope.column.label }}筛选</div>
+                    <!-- 选择 -->
+                    <el-select
+                      v-if="item.filter === 'select'"
+                      v-model="scope.column.filteredValue"
+                      :teleported="false"
+                      multiple
+                      @change="changeFilter(scope.column, item, item.filter)"
+                    >
+                      <el-option
+                        v-for="(val, index) in item.filterList"
+                        :key="index"
+                        :value="val"
+                        :label="val"
+                      />
+                    </el-select>
+                    <!-- 时间 -->
+                    <el-date-picker
+                      v-else-if="item.filter === 'date'"
+                      type="daterange"
+                      start-placeholder="请选择"
+                      end-placeholder="请选择"
+                      style="width: 90%"
+                      :teleported="false"
+                      v-model="scope.column.filteredValue"
+                      @change="changeFilter(scope.column, item, item.filter)"
                     />
-                  </el-select>
-                  <!-- 时间 -->
-                  <el-date-picker
-                    v-else-if="item.filter === 'date'"
-                    type="daterange"
-                    start-placeholder="请选择"
-                    end-placeholder="请选择"
-                    style="width: 90%"
-                    :teleported="false"
-                    v-model="scope.column.filteredValue"
-                    @change="changeFilter(scope.column, item, item.filter)"
-                  />
-                  <!-- input -->
-                  <el-input
-                    v-else-if="item.filter === 'input'"
-                    :placeholder="'请输入' + item.label"
-                    v-model="scope.column.filteredValue"
-                    clearable
-                    @input="inputFilter(scope.column, item, item.filter)"
-                  ></el-input>
+                    <!-- input -->
+                    <el-input
+                      v-else-if="item.filter === 'input'"
+                      :placeholder="'请输入' + item.label"
+                      v-model="scope.column.filteredValue"
+                      clearable
+                      @input="inputFilter(scope.column, item, item.filter)"
+                    ></el-input>
+                  </div>
                 </div>
-              </div>
-            </el-popover>
+              </el-popover>
+            </template>
           </template>
           <template #default="scope">
+            <!--<template v-if="item.children?.length">-->
+            <!--  <el-table-column v-for="value in item.children" :key="value.prop" v-bind="value">-->
+            <!--    {{ scope.row }}-->
+            <!--  </el-table-column>-->
+            <!--</template>-->
             <!--需自定义列-->
             <slot :name="item.prop" v-bind="scope">
               {{ scope.row[item.prop] }}
@@ -231,7 +242,7 @@
         </el-table-column>
       </template>
       <!-- 设置按钮列 -->
-      <el-table-column v-if="isSetting" width="45" fixed="right" align="right">
+      <el-table-column v-if="isSetting" width="40" fixed="right" align="right">
         <template #header>
           <el-link style="{font-size: 16px }" :underline="false">
             <el-icon><Setting /></el-icon>
@@ -241,6 +252,15 @@
       <!-- 插入表格最后一行之后的插槽 -->
       <template #append>
         <slot name="append" />
+      </template>
+      <!-- 无数据 -->
+      <template #empty>
+        <div class="table-empty">
+          <slot name="empty">
+            <img src="@/assets/images/not_data.png" alt="notData" />
+            <div>暂无数据</div>
+          </slot>
+        </div>
       </template>
     </el-table>
     <!--分页-->
@@ -605,6 +625,16 @@ defineExpose({
       float: right;
       font-size: 12px;
     }
+  }
+}
+.el-table__empty-block {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  .table-empty {
+    padding: 100px 0;
+    line-height: 30px;
   }
 }
 .active-color {

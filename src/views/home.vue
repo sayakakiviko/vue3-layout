@@ -8,6 +8,7 @@
     <div style="height: 620px">
       <ProTable
         border
+        isSetting
         isSearch
         isPagination
         rowKey="number"
@@ -19,6 +20,10 @@
         @selectionChange="selectionChange"
         @radioChange="radioChange"
       >
+        <template #headerAge>
+          <el-button type="primary">年龄</el-button>
+        </template>
+
         <template #expand>展开插槽</template>
         <template #number="scope">
           <el-link type="primary">{{ scope.row.number }}</el-link>
@@ -86,6 +91,15 @@ const tableColumns = [
     label: '年龄',
   },
   {
+    prop: 'detail',
+    label: '详情',
+    // children: [
+    //   { prop: 'idCard', label: '身份证号' },
+    //   { prop: 'email', label: '邮箱' },
+    //   { prop: 'address', label: '居住地址' },
+    // ],
+  },
+  {
     prop: 'time',
     label: '创建时间',
     filter: 'date',
@@ -109,6 +123,9 @@ tableData.value = [
     number: '001',
     name: '张三',
     age: 18,
+    idCard: 18,
+    email: '595875750@qq.com',
+    address: '武汉',
     time: '2023-12-01',
     status: 'normal',
     // children: [
