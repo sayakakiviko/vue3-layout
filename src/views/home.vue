@@ -91,15 +91,6 @@ const tableColumns = [
     label: '年龄',
   },
   {
-    prop: 'detail',
-    label: '详情',
-    // children: [
-    //   { prop: 'idCard', label: '身份证号' },
-    //   { prop: 'email', label: '邮箱' },
-    //   { prop: 'address', label: '居住地址' },
-    // ],
-  },
-  {
     prop: 'time',
     label: '创建时间',
     filter: 'date',
@@ -123,9 +114,9 @@ tableData.value = [
     number: '001',
     name: '张三',
     age: 18,
-    idCard: 18,
-    email: '595875750@qq.com',
-    address: '武汉',
+    // idCard: 18,
+    // email: '595875750@qq.com',
+    // address: '武汉',
     time: '2023-12-01',
     status: 'normal',
     // children: [
@@ -202,8 +193,7 @@ const getData = () => {
  * @row {object} 修改的行
  * */
 const changeTableData = (row) => {
-  console.log(row);
-  row.status = 'normal';
+  row.status = 'edit';
 };
 /**
  * 分页

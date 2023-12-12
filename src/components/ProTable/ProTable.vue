@@ -229,11 +229,6 @@
             </template>
           </template>
           <template #default="scope">
-            <!--<template v-if="item.children?.length">-->
-            <!--  <el-table-column v-for="value in item.children" :key="value.prop" v-bind="value">-->
-            <!--    {{ scope.row }}-->
-            <!--  </el-table-column>-->
-            <!--</template>-->
             <!--需自定义列-->
             <slot :name="item.prop" v-bind="scope">
               {{ scope.row[item.prop] }}
