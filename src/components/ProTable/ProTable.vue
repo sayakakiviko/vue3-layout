@@ -147,17 +147,7 @@
                 </template>
                 <div class="table-filter-box">
                   <div class="filter-top">
-                    <div class="sub-title">
-                      快捷操作
-                      <!--<el-link-->
-                      <!--  class="title-btn"-->
-                      <!--  type="primary"-->
-                      <!--  :underline="false"-->
-                      <!--  @click="onSort(scope.column, null)"-->
-                      <!--&gt;-->
-                      <!--  清空-->
-                      <!--</el-link>-->
-                    </div>
+                    <div class="sub-title">快捷操作</div>
                     <el-link
                       class="block-btn"
                       :class="{ 'active-color': scope.column.activeSort === 1 }"
@@ -177,17 +167,7 @@
                     </el-link>
                   </div>
                   <div class="filter-bottom">
-                    <div class="sub-title">
-                      筛选条件
-                      <!--<el-link-->
-                      <!--  class="title-btn"-->
-                      <!--  type="primary"-->
-                      <!--  :underline="false"-->
-                      <!--  @click="clearFilter(scope.column, item, item.filter)"-->
-                      <!--&gt;-->
-                      <!--  清空-->
-                      <!--</el-link>-->
-                    </div>
+                    <div class="sub-title">筛选条件</div>
                     <div class="sub-section">{{ scope.column.label }}筛选</div>
                     <!-- 选择 -->
                     <el-select
@@ -239,7 +219,11 @@
       <!-- 设置按钮列 -->
       <el-table-column v-if="isSetting" width="40" fixed="right" align="right">
         <template #header>
-          <el-link style="{font-size: 16px }" :underline="false">
+          <el-link
+            style="{font-size: 16px }"
+            :underline="false"
+            @click="data.showHeaderSetting = true"
+          >
             <el-icon><Setting /></el-icon>
           </el-link>
         </template>
@@ -266,11 +250,14 @@
       @currentChange="currentChange"
     />
   </div>
+  <!--列设置-->
+  <HeaderSetting v-model:isShow="data.showHeaderSetting"></HeaderSetting>
 </template>
 
 <script setup name="proTable">
 import Pagination from './components/pagination.vue';
 import TableSearch from './components/tableSearch.vue';
+import HeaderSetting from './components/headerSetting.vue';
 
 const props = defineProps({
   //是否展示边框线
@@ -326,6 +313,7 @@ let timer = null; // 维护一个 timer
 let searchTableData = []; //搜索框搜索出来的数据（前端分页用）
 const tableRef = ref(null); //表格ref
 const data = reactive({
+  showHeaderSetting: false, //列设置弹窗显隐
   radio: '', //单选值
   searchValue: '', //搜索内容
   sortColumn: {}, //激活排序的列
