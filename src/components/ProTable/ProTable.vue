@@ -5,7 +5,7 @@
     输出方法：
       selectionChange 复选框发生变化时会触发该事件，返回数组_选择的数据列表；
       radioChange 单选框发生变化时会触发该事件，返回对象_选择的数据；
-      searchTable 搜索框内容改变会触发该事件，非前端分页时返回字符串_搜索的关键字；注：为前端分页时，可不使用该方法。
+      searchTable 搜索框内容改变会触发该事件，非前端分页时返回字符串_搜索的关键字；注：为前端分页时，可不使用该方法，会内部搜索有search标记的列。
       pageChange 页码或每页显示数改变会触发该事件，返回参数1为数字_当前页码，返回参数2为数字_每页显示数；注：为前端分页时，可不使用该方法。
                  前端分页开启方法：isPagination为true；pagination的fullData为true。
 
@@ -251,13 +251,22 @@
     />
   </div>
   <!--列设置-->
-  <HeaderSetting v-model:isShow="data.showHeaderSetting"></HeaderSetting>
+  <HeaderSetting
+    v-model:isShow="data.showHeaderSetting"
+    :allColumns="allColumns"
+    :tableColumns="tableColumns"
+    @confirmSetting="confirmSetting"
+  ></HeaderSetting>
 </template>
 
 <script setup name="proTable">
 import Pagination from './components/pagination.vue';
 import TableSearch from './components/tableSearch.vue';
 import HeaderSetting from './components/headerSetting.vue';
+
+let timer = null; // 维护一个 timer
+let searchTableData = []; //搜索框搜索出来的数据（前端分页用）
+const tableRef = ref(null); //表格ref
 
 const props = defineProps({
   //是否展示边框线
@@ -285,13 +294,18 @@ const props = defineProps({
     type: String,
     default: 'id',
   },
-  //表格数据
-  tableData: {
+  //全部的表头
+  allColumns: {
     type: Array,
     default: () => [],
   },
   //表头
   tableColumns: {
+    type: Array,
+    default: () => [],
+  },
+  //表格数据
+  tableData: {
     type: Array,
     default: () => [],
   },
@@ -309,11 +323,8 @@ const props = defineProps({
   },
 });
 
-let timer = null; // 维护一个 timer
-let searchTableData = []; //搜索框搜索出来的数据（前端分页用）
-const tableRef = ref(null); //表格ref
 const data = reactive({
-  showHeaderSetting: false, //列设置弹窗显隐
+  showHeaderSetting: false, //列设置弹窗的显隐
   radio: '', //单选值
   searchValue: '', //搜索内容
   sortColumn: {}, //激活排序的列
@@ -342,7 +353,15 @@ watch(
 );
 
 const pageable = computed(() => props.pagination); //分页器
-
+/**
+ * 表头设置确认
+ * @columns {array} 动态设置的列
+ * */
+const confirmSetting = (columns) => {
+  clearFilterAll();
+  pageable.value.pageNum = 1; //重置页码
+  emit('confirmSetting', columns);
+};
 /**
  * 获取筛选的下拉选项
  * @list {array} 当前页的表格数据
@@ -554,7 +573,13 @@ const currentChange = (val) => {
   clearFilterAll();
 };
 
-const emit = defineEmits(['selectionChange', 'radioChange', 'searchTable', 'pageChange']);
+const emit = defineEmits([
+  'selectionChange',
+  'radioChange',
+  'searchTable',
+  'pageChange',
+  'confirmSetting',
+]);
 defineExpose({
   element: tableRef,
 });

@@ -13,12 +13,14 @@
         isPagination
         rowKey="number"
         ref="proTable"
+        :allColumns="allColumns"
         :tableData="tableData"
         :tableColumns="tableColumns"
         :pagination="page"
         @pageChange="pageChange"
         @selectionChange="selectionChange"
         @radioChange="radioChange"
+        @confirmSetting="confirmSetting"
       >
         <template #headerAge>
           <el-button type="primary">年龄</el-button>
@@ -52,7 +54,8 @@
 <script setup name="Home">
 let dialogShow = ref(false);
 const proTable = ref(null); //表格ref
-const tableColumns = [
+const allColumns = ref([]); //全部的列
+const tableColumns = ref([
   // {
   //   type: 'selection', //与单选互斥
   //   label: '复选',
@@ -86,10 +89,10 @@ const tableColumns = [
     // width: 800,
     // fixed: true,
   },
-  {
-    prop: 'age',
-    label: '年龄',
-  },
+  // {
+  //   prop: 'age',
+  //   label: '年龄',
+  // },
   {
     prop: 'time',
     label: '创建时间',
@@ -101,7 +104,7 @@ const tableColumns = [
     fixed: 'right',
     width: 200,
   },
-];
+]);
 const tableData = ref([]);
 const page = reactive({
   pageNum: 1, //当前页
@@ -172,20 +175,27 @@ tableData.value.push(
 );
 
 onMounted(() => {
-  //直接使用element表格的属性、方法
-  console.log(proTable.value.element.stripe);
-  // getData();
+  console.log(proTable.value.element.stripe); //直接使用element表格的属性、方法
+  getColumns();
+  getData();
 });
 
 /**
- * 表格复选框勾选
- * @list {array} 选择的数据
+ * 获取全部表头
+ * */
+const getColumns = () => {
+  window.$api.demo.getColumns({ tableName: 'demo', userName: '' }).then((res) => {
+    allColumns.value = res.data;
+  });
+};
+/**
+ * 获取表格数据
  * */
 const getData = () => {
-  window.$api.demo.getList({ id: 12, currentPage: page.pageNum }).then((res) => {
+  window.$api.demo.getList({ id: 0, currentPage: page.pageNum }).then((res) => {
     tableData.value = res.data.list;
     page.total = res.data.total;
-    page.fullData = res.data.list === res.data.total;
+    page.fullData = res.data.list.length === res.data.total;
   });
 };
 /**
@@ -201,8 +211,8 @@ const changeTableData = (row) => {
  * @pageSize {number} 每页显示数
  * */
 const pageChange = (pageNum, pageSize) => {
-  // page.pageNum = pageNum;
-  // page.pageSize = pageSize;
+  page.pageNum = pageNum;
+  page.pageSize = pageSize;
   // getData();
 };
 /**
@@ -218,6 +228,18 @@ const selectionChange = (list) => {
  * */
 const radioChange = (val) => {
   console.log(val);
+};
+/**
+ * 确认动态设置表头
+ * @columns {array} 动态设置的列
+ * */
+const confirmSetting = (columns) => {
+  page.pageNum = 1;
+  //保存设置的列
+  window.$api.demo.saveColumns({ tableName: 'demo', columns, userName: '' }).then((res) => {
+    proTable.value.getColumns();
+  });
+  getData();
 };
 /**
  * 提交上传

@@ -83,7 +83,7 @@
                 <!--&gt;-->
                 <!--  <template #item="{ element, index }">-->
                 <div v-for="item in rightData" :key="item.prop">
-                  <el-checkbox :label="item.prop">
+                  <el-checkbox :label="item.prop" :disabled="item.disabled">
                     <div class="check-row">
                       <el-icon class="row-mover" v-if="!data.rightSearchValue">
                         <MoreFilled />
@@ -94,6 +94,7 @@
                         </el-tooltip>
                       </div>
                       <el-link
+                        v-if="!item.disabled"
                         class="row-btn"
                         :underline="false"
                         @click.prevent="goTop(item.label)"
@@ -138,23 +139,20 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  //全部的表头
+  allColumns: {
+    type: Array,
+    default: () => [],
+  },
   //表头
   tableColumns: {
     type: Array,
-    default: () => [
-      {
-        prop: 'name',
-        label: '姓名',
-      },
-      {
-        prop: 'age',
-        label: '年龄',
-      },
-    ],
+    default: () => [],
   },
 });
 
 const data = reactive({
+  fixedData: [], //固定显示在列设置右侧的数据
   initLeftData: [], //初始化时左侧数据
   initRightData: [], //初始化时右侧数据
   leftCheckAll: false, //标记左侧是否已全选
@@ -169,9 +167,30 @@ const data = reactive({
   rightCheckedList: [], //右侧选中的数据
 });
 
-//获取传递来的表头，再过滤掉右侧已显示的表头
-data.leftDataList = props.tableColumns.filter(
-  (item) => !data.rightDataList.some((check) => check.prop === item.prop),
+//获取传递来的表头
+watch(
+  () => props.allColumns,
+  (newVal) => {
+    //固定显示在列设置右侧的数据
+    props.tableColumns.map((item) => {
+      if (item.label !== '操作' && item.prop) {
+        item.disabled = true;
+        data.fixedData.push(item);
+      }
+    });
+
+    //左侧数据
+    const leftList = props.allColumns.filter((item) => {
+      return data.fixedData.every((key) => item.prop !== key.prop);
+    });
+
+    data.leftDataList = [...leftList]; //左侧未显示的列
+    data.rightDataList = [...data.fixedData]; //右侧已显示的列
+
+    //获得初始数据，需脱离对象引用
+    data.initLeftData = JSON.parse(JSON.stringify(data.leftDataList));
+    data.initRightData = JSON.parse(JSON.stringify(data.rightDataList));
+  },
 );
 
 //弹框显隐
@@ -191,10 +210,6 @@ const leftData = computed(() => {
 const rightData = computed(() => {
   return data.rightDataList.filter((item) => item.label.includes(data.rightSearchValue));
 });
-
-//获得初始数据，需脱离对象引用
-data.initLeftData = JSON.parse(JSON.stringify(data.leftDataList));
-data.initRightData = JSON.parse(JSON.stringify(data.rightDataList));
 
 /**
  * 右侧全选复选框change事件
@@ -254,7 +269,10 @@ const toLeft = () => {
  * */
 const goTop = (label) => {
   data.rightDataList.map((item, index) => {
-    item.label === label && data.rightDataList.unshift(data.rightDataList.splice(index, 1)[0]);
+    // item.label === label && data.rightDataList.unshift(data.rightDataList.splice(index, 1)[0]);
+    //置顶的数据只能跟在固定列的后面
+    item.label === label &&
+      data.rightDataList.splice(data.fixedData.length, 0, data.rightDataList.splice(index, 1)[0]);
   });
 };
 /**
@@ -287,10 +305,11 @@ const closeSetting = () => {
  * 确认
  * */
 const confirmSetting = () => {
-  // data.rightDataList.map((item) => item.prop);//要显示的列
+  let columns = data.rightDataList.map((item) => item.prop); //要显示的列
+  emit('confirmSetting', columns);
   closeSetting();
 };
-const emit = defineEmits(['update:isShow']);
+const emit = defineEmits(['update:isShow', 'confirmSetting']);
 </script>
 
 <style lang="less" scoped>

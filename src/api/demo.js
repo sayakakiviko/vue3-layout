@@ -17,6 +17,14 @@ const demo = {
   getList(param, config) {
     return get('/m1/1271886-0-default/getList', param, config);
   },
+  //获取表格动态列
+  getColumns(param, config) {
+    return get('/m1/1271886-0-default/getColumns', param, config);
+  },
+  //保存设置的动态列
+  saveColumns(param, config) {
+    return get('/m1/1271886-0-default/saveColumns', param, config);
+  },
   //post传参
   postTest(param, config) {
     return post('/api/get.favicon', param, config);
