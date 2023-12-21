@@ -9,12 +9,37 @@
       @tab-click="tabClick"
     >
       <el-tab-pane
-        v-for="item in navTabStore.tabList"
+        v-for="(item, index) in navTabStore.tabList"
         :key="item.path"
-        :label="item.title"
         :name="item.path"
-        :closable="item.path !== '/home/index'"
-      />
+        :closable="item.path !== '/home'"
+      >
+        <template #label>
+          <!--右键菜单-->
+          <el-dropdown
+            trigger="contextmenu"
+            @visible-change="(visible) => dropdownVisible(visible, index)"
+          >
+            <span class="el-dropdown-link">{{ item.title }}</span>
+            <template #dropdown v-if="item.contextmenu">
+              <el-dropdown-menu>
+                <el-dropdown-item @click="navTabStore.closeNavTab(item.path, 'left', route)">
+                  关闭左侧
+                </el-dropdown-item>
+                <el-dropdown-item @click="navTabStore.closeNavTab(item.path, 'right', route)">
+                  关闭右侧
+                </el-dropdown-item>
+                <el-dropdown-item @click="navTabStore.closeNavTab(item.path, 'other', route)">
+                  关闭其他
+                </el-dropdown-item>
+                <el-dropdown-item @click="navTabStore.closeNavTab(item.path, 'all')">
+                  关闭所有
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </template>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -38,9 +63,22 @@ const tabClick = (pane) => {
  * @key {string} tab唯一值，这里是路由路径
  * */
 const removeTab = (key) => {
-  const item = navTabStore.tabList.find((i) => i.path === key);
+  // const item = navTabStore.tabList.find((i) => i.path === key);
   navTabStore.removeTabItem(key);
   navTabStore.removeCacheItem(route.name);
+};
+/**
+ * 右键菜单显示，隐藏其他已显示的右键菜单
+ * @visible {boolean} 当前右键菜单显隐
+ * @index {number} 当前右键菜单的标签的下标
+ * */
+const dropdownVisible = (visible, index) => {
+  if (visible) {
+    //隐藏其他已显示的右键菜单
+    navTabStore.tabList.map((item, i) => {
+      item.contextmenu = index === i;
+    });
+  }
 };
 </script>
 
@@ -61,6 +99,9 @@ const removeTab = (key) => {
       .is-active {
         background-color: var(--el-color-primary-light-9);
         color: var(--el-color-primary);
+        .el-dropdown-link {
+          color: var(--el-color-primary);
+        }
       }
       .el-tabs__item {
         border-bottom: none;
