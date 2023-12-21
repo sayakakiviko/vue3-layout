@@ -234,12 +234,12 @@ const radioChange = (val) => {
  * @columns {array} 动态设置的列
  * */
 const confirmSetting = (columns) => {
-  page.pageNum = 1;
+  // page.pageNum = 1;
   //保存设置的列
-  window.$api.demo.saveColumns({ tableName: 'demo', columns, userName: '' }).then((res) => {
-    proTable.value.getColumns();
-  });
-  getData();
+  // window.$api.demo.saveColumns({ tableName: 'demo', columns, userName: '' }).then((res) => {
+  //   proTable.value.getColumns();
+  // });
+  // getData();
 };
 /**
  * 提交上传

@@ -359,7 +359,7 @@ const pageable = computed(() => props.pagination); //分页器
  * */
 const confirmSetting = (columns) => {
   clearFilterAll();
-  pageable.value.pageNum = 1; //重置页码
+  // pageable.value.pageNum = 1; //重置页码
   emit('confirmSetting', columns);
 };
 /**

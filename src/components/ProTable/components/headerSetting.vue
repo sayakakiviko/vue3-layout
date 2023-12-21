@@ -211,6 +211,9 @@ const rightData = computed(() => {
   return data.rightDataList.filter((item) => item.label.includes(data.rightSearchValue));
 });
 
+// 表头
+const tableColumns = computed(() => props.tableColumns);
+
 /**
  * 右侧全选复选框change事件
  * @bool {boolean} 是否全选
@@ -305,8 +308,19 @@ const closeSetting = () => {
  * 确认
  * */
 const confirmSetting = () => {
-  let columns = data.rightDataList.map((item) => item.prop); //要显示的列
-  emit('confirmSetting', columns);
+  // const columns = data.rightDataList.map((item) => item.prop); //要显示的列（含固定显示的列）
+  //要显示的列（不含固定显示的列）
+  const columns = data.rightDataList.filter((item) => {
+    return data.fixedData.every((key) => item.prop !== key.prop);
+  });
+
+  // 找到最后一个固定显示列的位置，动态列的数据只能跟在固定列后面
+  let index = tableColumns.value.findIndex((v) => {
+    return v.prop === data.fixedData[data.fixedData.length - 1].prop;
+  });
+
+  tableColumns.value.splice(index + 1, 0, ...columns); //
+  // emit('confirmSetting', columns);
   closeSetting();
 };
 const emit = defineEmits(['update:isShow', 'confirmSetting']);
