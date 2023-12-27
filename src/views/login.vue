@@ -9,18 +9,14 @@
     <div class="login-box">
       <!-- 左侧 -->
       <div class="login-left">
-        <img src="@/assets/images//svg/login.svg" />
+        <img src="@/assets/images/svg/login.svg" />
       </div>
       <!-- 右侧 -->
       <div class="login-right">
         <el-form :model="formLogin" class="demo-form-inline">
           <h3 class="login-form-title">账号登录</h3>
           <el-form-item>
-            <el-input
-              v-model="formLogin.username"
-              placeholder="账号"
-              clearable
-            />
+            <el-input v-model="formLogin.username" placeholder="账号" clearable />
           </el-form-item>
           <el-form-item>
             <el-input
@@ -38,9 +34,7 @@
             </el-row>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" :loading="loading" @click="onLogin">
-              登录
-            </el-button>
+            <el-button type="primary" :loading="loading" @click="onLogin">登录</el-button>
           </el-form-item>
           <!--<el-form-item>-->
           <!--  <el-button @click="onSubmit">注册</el-button>-->
@@ -81,8 +75,7 @@ const onLogin = () => {
       username: 'admin',
       role: 'admin',
       language: 'zh',
-      avatar:
-        'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+      avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
     };
     userStore.login(userInfo);
     router.push('/');
@@ -97,8 +90,7 @@ const onLogin = () => {
   align-items: center;
   width: 100%;
   height: 100%;
-  background: var(--el-color-white) url('@/assets/images/svg/background.svg')
-    no-repeat center top;
+  background: var(--el-color-white) url('@/assets/images/svg/background.svg') no-repeat center top;
   .login-head {
     display: flex;
     align-items: center;
@@ -131,11 +123,7 @@ const onLogin = () => {
       align-items: center;
       flex: 1;
       height: 100%;
-      background: linear-gradient(
-        60deg,
-        var(--el-color-primary),
-        var(--el-color-primary-light-3)
-      );
+      background: linear-gradient(60deg, var(--el-color-primary), var(--el-color-primary-light-3));
     }
     .login-right {
       width: 270px;

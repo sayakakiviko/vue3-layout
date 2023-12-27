@@ -1,6 +1,12 @@
 <!--表格组件-列设置组件-->
 <template>
-  <el-dialog v-model="isShowDialog" title="表格列设置" width="800" @close="closeSetting">
+  <el-dialog
+    destroy-on-close
+    v-model="isShowDialog"
+    title="表格列设置"
+    width="800"
+    @close="closeSetting"
+  >
     <section class="main-section">
       <div class="section-left">
         <div class="section-title">可选字段（共{{ data.leftDataList.length }}个）</div>
@@ -20,7 +26,7 @@
               style="margin-bottom: 4px"
               v-model="data.leftSearchValue"
               :suffix-icon="Search"
-            ></el-input>
+            />
             <el-scrollbar height="260px">
               <el-checkbox-group
                 v-model="data.leftCheckedList"
@@ -58,6 +64,7 @@
             <el-checkbox
               v-model="data.rightCheckAll"
               :indeterminate="data.rightIndeterminate"
+              :disabled="rightData.length <= data.fixedData.length"
               @change="(bool) => checkAllChange(bool, false)"
             >
               {{ data.rightCheckedList.length }}/{{ data.rightDataList.length }}条
@@ -69,7 +76,7 @@
               style="margin-bottom: 10px"
               v-model="data.rightSearchValue"
               :suffix-icon="Search"
-            ></el-input>
+            />
             <el-scrollbar height="260px">
               <el-checkbox-group
                 v-model="data.rightCheckedList"
@@ -85,16 +92,16 @@
                 <div v-for="item in rightData" :key="item.prop">
                   <el-checkbox :label="item.prop" :disabled="item.disabled">
                     <div class="check-row">
-                      <el-icon class="row-mover" v-if="!data.rightSearchValue">
-                        <MoreFilled />
-                      </el-icon>
+                      <!--<el-icon class="row-mover" v-if="!data.rightSearchValue">-->
+                      <!--  <MoreFilled />-->
+                      <!--</el-icon>-->
                       <div class="row-text">
                         <el-tooltip placement="top" :content="item.label">
                           {{ item.label }}
                         </el-tooltip>
                       </div>
                       <el-link
-                        v-if="!item.disabled"
+                        v-if="!item.disabled && !data.rightSearchValue"
                         class="row-btn"
                         :underline="false"
                         @click.prevent="goTop(item.label)"
@@ -139,6 +146,11 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  //表格名称。设置动态列时必传
+  tableName: {
+    type: String,
+    default: '',
+  },
   //全部的表头
   allColumns: {
     type: Array,
@@ -155,6 +167,8 @@ const data = reactive({
   fixedData: [], //固定显示在列设置右侧的数据
   initLeftData: [], //初始化时左侧数据
   initRightData: [], //初始化时右侧数据
+  openLeftData: [], //弹窗打开时左侧数据
+  openRightData: [], //弹窗打开时右侧数据
   leftCheckAll: false, //标记左侧是否已全选
   leftIndeterminate: false, //左侧的不确定状态，仅负责样式控制
   leftSearchValue: '', //左侧搜索框
@@ -166,6 +180,8 @@ const data = reactive({
   rightDataList: [], //左侧的复选框数据
   rightCheckedList: [], //右侧选中的数据
 });
+const append = [];
+const proTable = JSON.parse(localStorage.getItem('proTable_' + props.tableName)); //获取存在本地设置的表头
 
 //获取传递来的表头
 watch(
@@ -176,6 +192,8 @@ watch(
       if (item.label !== '操作' && item.prop) {
         item.disabled = true;
         data.fixedData.push(item);
+      } else if (item.label === '操作') {
+        append.push(item); //存入要追加的列
       }
     });
 
@@ -184,12 +202,34 @@ watch(
       return data.fixedData.every((key) => item.prop !== key.prop);
     });
 
-    data.leftDataList = [...leftList]; //左侧未显示的列
-    data.rightDataList = [...data.fixedData]; //右侧已显示的列
+    data.leftDataList = [...leftList]; //左侧未显示在表格的列
+    data.rightDataList = [...data.fixedData]; //右侧已显示在表格的列
+
+    if (proTable?.right) {
+      data.leftDataList = proTable.left;
+      data.rightDataList = proTable.right;
+      // tableColumns.value = proTable.columns;
+    }
 
     //获得初始数据，需脱离对象引用
     data.initLeftData = JSON.parse(JSON.stringify(data.leftDataList));
     data.initRightData = JSON.parse(JSON.stringify(data.rightDataList));
+  },
+);
+//获取弹窗开启时的数据
+watch(
+  () => props.isShow,
+  (newVal) => {
+    if (newVal) {
+      // if (proTable.right) {
+      //   data.leftDataList = proTable.left;
+      //   data.rightDataList = proTable.right;
+      // }
+
+      //获得初始数据，需脱离对象引用
+      data.openLeftData = JSON.parse(JSON.stringify(data.leftDataList));
+      data.openRightData = JSON.parse(JSON.stringify(data.rightDataList));
+    }
   },
 );
 
@@ -213,6 +253,8 @@ const rightData = computed(() => {
 
 // 表头
 const tableColumns = computed(() => props.tableColumns);
+//若设置了表头用已设置的表头
+proTable?.right && tableColumns.value.splice(0, tableColumns.value.length + 1, ...proTable.columns);
 
 /**
  * 右侧全选复选框change事件
@@ -221,8 +263,12 @@ const tableColumns = computed(() => props.tableColumns);
  * */
 const checkAllChange = (bool, type) => {
   data[(type && 'leftCheckedList') || 'rightCheckedList'] = bool
-    ? data[(type && 'leftDataList') || 'rightDataList'].map((item) => item.prop)
+    ? (type && data.leftDataList.map((item) => item.prop)) || //左侧全选的处理
+      data.rightDataList //右侧全选。因为右侧有固定显示列不允许勾选需要过滤禁选项
+        .filter((item) => data.fixedData.every((el) => el.prop !== item.prop))
+        .map((item) => item.prop)
     : [];
+
   data[(type && 'leftIndeterminate') || 'rightIndeterminate'] = false;
 };
 /**
@@ -258,7 +304,7 @@ const toRight = () => {
 const toLeft = () => {
   data.rightCheckedList.map((el) => {
     let i = data.rightDataList.findIndex((cel) => cel.prop === el);
-    i > -1 && data.rightDataList.splice(i, 1);
+    i > -1 && data.leftDataList.push(data.rightDataList.splice(i, 1)[0]);
   });
 
   //置空右侧选中
@@ -274,6 +320,7 @@ const goTop = (label) => {
   data.rightDataList.map((item, index) => {
     // item.label === label && data.rightDataList.unshift(data.rightDataList.splice(index, 1)[0]);
     //置顶的数据只能跟在固定列的后面
+    console.log(data.fixedData.length);
     item.label === label &&
       data.rightDataList.splice(data.fixedData.length, 0, data.rightDataList.splice(index, 1)[0]);
   });
@@ -302,25 +349,43 @@ const onReset = () => {
  * 关闭弹窗
  * */
 const closeSetting = () => {
+  //初始化左侧
+  data.leftSearchValue = '';
+  data.leftCheckedList = [];
+  data.leftIndeterminate = false;
+  data.leftCheckAll = false;
+
+  //初始化右侧
+  data.rightSearchValue = '';
+  data.rightCheckedList = [];
+  data.rightIndeterminate = false;
+  data.rightCheckAll = false;
   emit('update:isShow', false);
 };
 /**
  * 确认
  * */
 const confirmSetting = () => {
-  // const columns = data.rightDataList.map((item) => item.prop); //要显示的列（含固定显示的列）
   //要显示的列（不含固定显示的列）
-  const columns = data.rightDataList.filter((item) => {
-    return data.fixedData.every((key) => item.prop !== key.prop);
-  });
+  // const column = data.rightDataList.filter((item) =>
+  //   data.fixedData.every((key) => item.prop !== key.prop),
+  // );
 
-  // 找到最后一个固定显示列的位置，动态列的数据只能跟在固定列后面
-  let index = tableColumns.value.findIndex((v) => {
-    return v.prop === data.fixedData[data.fixedData.length - 1].prop;
-  });
+  const columns = data.rightDataList.map((item) => item.prop); //要显示的列（含固定显示的列）
+  const index = tableColumns.value.findIndex((v) => v.prop === data.fixedData[0].prop); // 找到第一个固定显示列的位置
+  tableColumns.value.splice(index, data.openRightData.length); //先移除表格里的动态列
+  tableColumns.value.splice(index + 1, 0, ...data.rightDataList); //然后新增更改后的动态列
 
-  tableColumns.value.splice(index + 1, 0, ...columns); //
-  // emit('confirmSetting', columns);
+  //表头数据存入本地
+  const list = tableColumns.value.filter((item) => append.every((el) => item.prop !== el.prop)); //去重
+  const obj = {
+    left: data.leftDataList,
+    right: data.rightDataList,
+    columns: [...list, ...append],
+  };
+  localStorage.setItem('proTable_' + props.tableName, JSON.stringify(obj)); //将设置的表头数据保存在本地
+
+  emit('confirmSetting', columns);
   closeSetting();
 };
 const emit = defineEmits(['update:isShow', 'confirmSetting']);

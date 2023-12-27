@@ -13,6 +13,7 @@
         isPagination
         rowKey="number"
         ref="proTable"
+        tableName="demo"
         :allColumns="allColumns"
         :tableData="tableData"
         :tableColumns="tableColumns"

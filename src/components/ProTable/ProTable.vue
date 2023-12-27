@@ -8,6 +8,7 @@
       searchTable 搜索框内容改变会触发该事件，非前端分页时返回字符串_搜索的关键字；注：为前端分页时，可不使用该方法，会内部搜索有search标记的列。
       pageChange 页码或每页显示数改变会触发该事件，返回参数1为数字_当前页码，返回参数2为数字_每页显示数；注：为前端分页时，可不使用该方法。
                  前端分页开启方法：isPagination为true；pagination的fullData为true。
+      confirmSetting 表头设置弹窗点击确定会触发该事件。返回设置的表头
 
     使用示例：
       <ProTable
@@ -253,10 +254,11 @@
   <!--列设置-->
   <HeaderSetting
     v-model:isShow="data.showHeaderSetting"
+    :tableName="tableName"
     :allColumns="allColumns"
     :tableColumns="tableColumns"
     @confirmSetting="confirmSetting"
-  ></HeaderSetting>
+  />
 </template>
 
 <script setup name="proTable">
@@ -293,6 +295,11 @@ const props = defineProps({
   rowKey: {
     type: String,
     default: 'id',
+  },
+  //表格名称。设置动态列时必传
+  tableName: {
+    type: String,
+    default: '',
   },
   //全部的表头
   allColumns: {
@@ -358,7 +365,7 @@ const pageable = computed(() => props.pagination); //分页器
  * @columns {array} 动态设置的列
  * */
 const confirmSetting = (columns) => {
-  clearFilterAll();
+  // clearFilterAll();
   // pageable.value.pageNum = 1; //重置页码
   emit('confirmSetting', columns);
 };
