@@ -5,7 +5,7 @@
     v-model="isShowDialog"
     title="表格列设置"
     width="800"
-    @close="closeSetting"
+    @close="closeSetting(true)"
   >
     <section class="main-section">
       <div class="section-left">
@@ -121,15 +121,11 @@
     </section>
     <template #footer>
       <span class="dialog-footer">
-        <!--<el-button v-if="tableName" link class="btn-left" @click="reset">-->
-        <!--  <el-icon><Refresh /></el-icon>-->
-        <!--  恢复默认-->
-        <!--</el-button>-->
         <el-button link class="btn-left" @click="onReset">
           <el-icon><Refresh /></el-icon>
           恢复默认
         </el-button>
-        <el-button @click="closeSetting">取消</el-button>
+        <el-button @click="closeSetting(true)">取消</el-button>
         <el-button type="primary" @click="confirmSetting">确定</el-button>
       </span>
     </template>
@@ -202,13 +198,16 @@ watch(
       return data.fixedData.every((key) => item.prop !== key.prop);
     });
 
-    data.leftDataList = [...leftList]; //左侧未显示在表格的列
-    data.rightDataList = [...data.fixedData]; //右侧已显示在表格的列
-
     if (proTable?.right) {
+      //若设置了表头用已设置的表头
       data.leftDataList = proTable.left;
       data.rightDataList = proTable.right;
       // tableColumns.value = proTable.columns;
+      tableColumns.value.splice(0, tableColumns.value.length + 1, ...proTable.columns);
+    } else {
+      //未设置表头
+      data.leftDataList = [...leftList]; //左侧未显示在表格的列
+      data.rightDataList = [...data.fixedData]; //右侧已显示在表格的列
     }
 
     //获得初始数据，需脱离对象引用
@@ -221,11 +220,6 @@ watch(
   () => props.isShow,
   (newVal) => {
     if (newVal) {
-      // if (proTable.right) {
-      //   data.leftDataList = proTable.left;
-      //   data.rightDataList = proTable.right;
-      // }
-
       //获得初始数据，需脱离对象引用
       data.openLeftData = JSON.parse(JSON.stringify(data.leftDataList));
       data.openRightData = JSON.parse(JSON.stringify(data.rightDataList));
@@ -250,11 +244,7 @@ const leftData = computed(() => {
 const rightData = computed(() => {
   return data.rightDataList.filter((item) => item.label.includes(data.rightSearchValue));
 });
-
-// 表头
-const tableColumns = computed(() => props.tableColumns);
-//若设置了表头用已设置的表头
-proTable?.right && tableColumns.value.splice(0, tableColumns.value.length + 1, ...proTable.columns);
+const tableColumns = computed(() => props.tableColumns); // 表头
 
 /**
  * 右侧全选复选框change事件
@@ -320,7 +310,6 @@ const goTop = (label) => {
   data.rightDataList.map((item, index) => {
     // item.label === label && data.rightDataList.unshift(data.rightDataList.splice(index, 1)[0]);
     //置顶的数据只能跟在固定列的后面
-    console.log(data.fixedData.length);
     item.label === label &&
       data.rightDataList.splice(data.fixedData.length, 0, data.rightDataList.splice(index, 1)[0]);
   });
@@ -329,6 +318,7 @@ const goTop = (label) => {
  * 恢复默认
  * */
 const onReset = () => {
+  // localStorage.removeItem('proTable_' + props.tableName);
   //初始化数据，需脱离对象引用
   data.leftDataList = JSON.parse(JSON.stringify(data.initLeftData));
   data.rightDataList = JSON.parse(JSON.stringify(data.initRightData));
@@ -347,8 +337,15 @@ const onReset = () => {
 };
 /**
  * 关闭弹窗
+ * @flag {boolean} 是否是点击取消
  * */
-const closeSetting = () => {
+const closeSetting = (flag) => {
+  //若点击取消，则左右重置开始状态
+  if (flag) {
+    data.leftDataList = data.openLeftData;
+    data.rightDataList = data.openRightData;
+  }
+
   //初始化左侧
   data.leftSearchValue = '';
   data.leftCheckedList = [];
@@ -360,6 +357,7 @@ const closeSetting = () => {
   data.rightCheckedList = [];
   data.rightIndeterminate = false;
   data.rightCheckAll = false;
+
   emit('update:isShow', false);
 };
 /**

@@ -5,7 +5,7 @@
       该按钮仅管理员可见
     </el-button>
     <!--表格-->
-    <div style="height: 620px">
+    <div style="height: 520px">
       <ProTable
         border
         isSetting
@@ -23,8 +23,8 @@
         @radioChange="radioChange"
         @confirmSetting="confirmSetting"
       >
-        <template #headerAge>
-          <el-button type="primary">年龄</el-button>
+        <template #header_age>
+          <el-button type="primary">年龄T</el-button>
         </template>
 
         <template #expand>展开插槽</template>
@@ -47,6 +47,41 @@
         </template>
       </ProTable>
     </div>
+    <ProTable
+        border
+        isSetting
+        isSearch
+        isPagination
+        rowKey="number"
+        ref="proTable2"
+        tableName="demo2"
+        :allColumns="allColumns"
+        :tableData="tableData"
+        :tableColumns="tableColumns2"
+        :pagination="page"
+        @pageChange="pageChange"
+        @selectionChange="selectionChange"
+        @radioChange="radioChange"
+        @confirmSetting="confirmSetting"
+      >
+        <template #number="scope">
+          <el-link type="primary">{{ scope.row.number }}</el-link>
+        </template>
+        <template #name="scope">
+          <el-input
+            v-if="scope.row.status === 'edit'"
+            v-model.trim="scope.row.name"
+            placeholder="请输入"
+          />
+          <span v-else>{{ scope.row.name }}</span>
+        </template>
+        <template #handle="scope">
+          <el-space>
+            <el-link type="primary" @click="changeTableData(scope.row)">编辑</el-link>
+            <el-link type="danger">删除</el-link>
+          </el-space>
+        </template>
+      </ProTable>
   </div>
 
   <UploadDialog isSingle :isShow="dialogShow" @close="dialogShow = false" @submit="submit" />
@@ -57,6 +92,56 @@ let dialogShow = ref(false);
 const proTable = ref(null); //表格ref
 const allColumns = ref([]); //全部的列
 const tableColumns = ref([
+  // {
+  //   type: 'selection', //与单选互斥
+  //   label: '复选',
+  // },
+  {
+    type: 'radio', //与复选互斥
+    label: '单选',
+    align: 'center',
+    width: 55,
+  },
+  // {
+  //   type: 'expand',
+  //   label: '',
+  // },
+  //树状表格不建议使用序号
+  {
+    type: 'index',
+    label: '序号',
+    width: 70,
+  },
+  {
+    prop: 'number',
+    label: '编号',
+    filter: 'input',
+  },
+  {
+    prop: 'name',
+    label: '姓名',
+    filter: 'select',
+    search: true, //该列是否可在顶部搜索框搜索出来（前端分页用）
+    // width: 800,
+    // fixed: true,
+  },
+  // {
+  //   prop: 'age',
+  //   label: '年龄',
+  // },
+  {
+    prop: 'time',
+    label: '创建时间',
+    filter: 'date',
+  },
+  {
+    prop: 'handle',
+    label: '操作',
+    fixed: 'right',
+    width: 200,
+  },
+]);
+const tableColumns2 = ref([
   // {
   //   type: 'selection', //与单选互斥
   //   label: '复选',

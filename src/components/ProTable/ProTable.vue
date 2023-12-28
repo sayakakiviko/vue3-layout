@@ -135,7 +135,7 @@
         <el-table-column v-else show-overflow-tooltip v-bind="item">
           <template #header="scope">
             <!-- 自定表头插槽 -->
-            <slot :name="'header' + item.prop" v-bind="scope">
+            <slot :name="'header_' + item.prop" v-bind="scope">
               {{ scope.column.label }}
             </slot>
             <!-- 表头筛选 -->
