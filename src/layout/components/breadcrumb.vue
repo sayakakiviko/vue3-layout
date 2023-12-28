@@ -1,16 +1,11 @@
 <template>
-  <div
-    class="breadcrumb"
-    :class="{ hide: !useBreadcrumbStore().breadcrumb.length }"
-  >
+  <div class="breadcrumb" :class="{ hide: !useBreadcrumbStore().breadcrumb.length }">
     <el-breadcrumb style="line-height: 30px" :separator-icon="ArrowRight">
       <el-breadcrumb-item
-        v-for="item in breadcrumbStore.breadcrumb"
+        v-for="(item, index) in breadcrumbStore.breadcrumb"
         :key="item.title"
         :to="
-          item.name && index < breadcrumbStore.breadcrumb.length - 1
-            ? { name: item.name }
-            : null
+          item.name && index < breadcrumbStore.breadcrumb.length - 1 ? { name: item.name } : null
         "
       >
         {{ item.title }}

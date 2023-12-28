@@ -103,6 +103,7 @@
       v-bind="$attrs"
       :row-key="rowKey"
       :border="border"
+      :height="height"
       :data="data.showTableData"
       @selection-change="
         (list) => {
@@ -290,6 +291,10 @@ const props = defineProps({
   isPagination: {
     type: Boolean,
     default: false,
+  },
+  //表格高度
+  height: {
+    type: Number,
   },
   //行数据的 Key，用来优化 Table 的渲染。单选时需要传入rowKey，唯一值，如id、编号
   rowKey: {
@@ -598,7 +603,7 @@ defineExpose({
   flex: 1;
   flex-direction: column;
   width: 100%;
-  height: 100%;
+  //height: 100%;
   :deep(.el-table tr th) {
     background: var(--el-fill-color-light);
     color: #333;

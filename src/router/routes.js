@@ -25,53 +25,73 @@ const routes = [
     children: [
       {
         path: '/home',
-        name: 'Home',
+        name: 'home',
         component: () => import('@/views/home.vue'), // 路由懒加载
-        meta: { title: '首页', icon: 'location' }, //icon：显示在菜单上的图标
         menu: true, //是否要显示在菜单上
+        meta: { id: '1', title: '首页', icon: 'location' }, //icon：显示在菜单上的图标
       },
       {
         path: '/hello',
-        name: 'Hello',
+        name: 'hello',
         redirect: '/hello/index',
         // component: () => import('@/views/hello.vue'), // 路由懒加载
-        meta: { title: 'hello', icon: 'setting', keepAlive: true },
         menu: true,
+        meta: { id: '2', title: 'hello', icon: 'setting', keepAlive: true },
         children: [
           {
             path: '/hello/index',
-            name: 'Hello',
+            name: 'hello',
             component: () => import('@/views/hello.vue'), // 路由懒加载
+            menu: true,
             meta: {
               keepAlive: true,
+              id: '2-1',
               title: '你好',
               icon: 'document',
               breadcrumb: [
                 { title: 'hello', name: 'Hello' },
-                {
-                  title: '你好',
-                  name: 'Hello',
-                },
+                { title: '你好', name: 'Hello' },
               ],
             },
-            menu: true,
           },
           {
             path: '/hello/demo',
-            name: 'Demo',
+            name: 'demo',
             component: () => import('@/views/demo.vue'), // 路由懒加载
+            menu: true,
             meta: {
               keepAlive: true,
+              id: '2-2',
               title: '演示',
               breadcrumb: [
                 { title: 'hello', name: 'Hello' },
-                {
-                  title: '演示',
-                  name: 'Demo',
-                },
+                { title: '演示', name: 'Demo' },
               ],
             },
+          },
+        ],
+      },
+      {
+        path: '/usedComponents',
+        name: 'usedComponents',
+        redirect: '/usedComponents/proTablePart',
+        // component: () => import('@/views/hello.vue'), // 路由懒加载
+        menu: true,
+        meta: { id: '3', title: '常用组件', icon: 'setting' },
+        children: [
+          {
+            path: '/usedComponents/proTablePart',
+            name: 'proTablePart',
+            component: () => import('@/views/usedComponents/proTablePart.vue'), // 路由懒加载
             menu: true,
+            meta: {
+              id: '3-1',
+              title: '表格组件',
+              breadcrumb: [
+                { title: '常用组件', name: 'usedComponents' },
+                { title: '表格组件', name: 'proTablePart' },
+              ],
+            },
           },
         ],
       },
@@ -82,8 +102,8 @@ const routes = [
     path: '/404',
     name: '404',
     component: () => import('@/views/404.vue'),
-    meta: { title: '404', keepAlive: false, roles: ['user'] }, //roles的值代表哪些角色可以进入此路由
     menu: true,
+    meta: { title: '404', keepAlive: false, roles: ['user'] }, //roles的值代表哪些角色可以进入此路由
     // 单独的前置路由守卫
     beforeEnter: (to, from) => {
       document.title = '欢迎学习vue3';
