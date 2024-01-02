@@ -3,7 +3,7 @@
   <el-checkbox v-model="checked">test</el-checkbox>
 </template>
 
-<script setup name="Hello">
+<script setup name="hello">
 const checked = ref(false);
 </script>
 

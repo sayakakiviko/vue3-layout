@@ -36,21 +36,14 @@
             点击上传
           </el-button>
           <p v-if="accept">
-            <el-text type="info" size="small">
-              仅支持 {{ accept }} 等格式
-            </el-text>
+            <el-text type="info" size="small">仅支持 {{ accept }} 等格式</el-text>
           </p>
         </div>
       </el-upload>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="close">取消</el-button>
-          <el-button
-            type="primary"
-            :loading="isLoading"
-            :disabled="disabled"
-            @click="submit"
-          >
+          <el-button type="primary" :loading="isLoading" :disabled="disabled" @click="submit">
             确认
           </el-button>
         </span>

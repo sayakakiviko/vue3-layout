@@ -141,6 +141,7 @@ const tableColumns2 = ref([
   {
     type: 'selection', //与单选互斥
     label: '复选',
+    reserveSelection: true, //数据刷新后是否保留选中项
   },
   // {
   //   type: 'radio', //与复选互斥

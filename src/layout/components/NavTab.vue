@@ -2,7 +2,7 @@
 <template>
   <div class="nav-tab">
     <el-tabs
-      v-model="route.path"
+      :model-value="route.path"
       type="card"
       closable
       @tab-remove="removeTab"

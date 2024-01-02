@@ -1,11 +1,6 @@
 <!--全局搜索-->
 <template>
-  <el-input
-    v-model="data.keyword"
-    placeholder="请输入搜索关键字"
-    class="search"
-    @change="onSearch"
-  >
+  <el-input v-model="data.keyword" placeholder="请输入搜索关键字" class="search" @change="onSearch">
     <template #prepend>
       <el-select v-model.trim="data.selectVal">
         <el-option
@@ -23,11 +18,7 @@
 
   <!--全局搜索弹窗-->
   <el-dialog v-model="data.searchVisible" title="全局搜索">
-    <el-input
-      v-model.trim="data.keyword"
-      placeholder="请输入搜索关键字"
-      class="search"
-    >
+    <el-input v-model.trim="data.keyword" placeholder="请输入搜索关键字" class="search">
       <template #prepend>
         <el-select v-model="data.selectVal">
           <el-option
@@ -50,9 +41,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="data.searchVisible = false">取消</el-button>
-        <el-button type="primary" @click="data.searchVisible = false">
-          确定
-        </el-button>
+        <el-button type="primary" @click="data.searchVisible = false">确定</el-button>
       </span>
     </template>
   </el-dialog>
@@ -61,25 +50,21 @@
 <script setup>
 import { Search } from '@element-plus/icons-vue';
 
-const state = reactive({
-  data: {
-    keyword: '', //搜索内容
-    selectVal: 1, //选中的下拉
-    selectList: [], //下拉列表
-    searchVisible: false, //是否显示全局搜索弹窗
-    tableData: [], //搜索结果
-  },
+const data = reactive({
+  keyword: '', //搜索内容
+  selectVal: 1, //选中的下拉
+  selectList: [], //下拉列表
+  searchVisible: false, //是否显示全局搜索弹窗
+  tableData: [], //搜索结果
 });
-const { data } = toRefs(state);
-const vm = state.data;
 
-vm.selectList = [
+data.selectList = [
   {
-    label: 'CAD文档',
+    label: '全部',
     value: 1,
   },
   {
-    label: 'testtest',
+    label: 'CAD文档',
     value: 2,
   },
 ];
@@ -88,8 +73,8 @@ vm.selectList = [
  * 搜索
  * */
 const onSearch = () => {
-  if (!vm.keyword) return window.$message.error('搜索内容不能为空');
-  vm.searchVisible = true;
+  if (!data.keyword) return window.$message.error('搜索内容不能为空');
+  data.searchVisible = true;
 };
 </script>
 

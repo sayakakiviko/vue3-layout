@@ -36,9 +36,7 @@ export const useNavTabStore = defineStore({
       if (index >= 0) {
         const isActive = router.currentRoute.value.path === this.tabList[index]['path'];
         this.tabList.splice(index, 1);
-        if (isActive) {
-          router.push({ path: this.tabList[this.tabList.length - 1]['path'] });
-        }
+        isActive && router.push({ path: this.tabList[this.tabList.length - 1]['path'] });
       }
     },
     /**
@@ -102,5 +100,8 @@ export const useNavTabStore = defineStore({
         return this.tabList.some((val) => val.name === item);
       });
     },
+  },
+  persist: {
+    enabled: true,
   },
 });

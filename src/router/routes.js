@@ -49,8 +49,8 @@ const routes = [
               title: '你好',
               icon: 'document',
               breadcrumb: [
-                { title: 'hello', name: 'Hello' },
-                { title: '你好', name: 'Hello' },
+                { title: 'hello', name: 'hello' },
+                { title: '你好', name: 'hello' },
               ],
             },
           },
@@ -64,8 +64,8 @@ const routes = [
               id: '2-2',
               title: '演示',
               breadcrumb: [
-                { title: 'hello', name: 'Hello' },
-                { title: '演示', name: 'Demo' },
+                { title: 'hello', name: 'hello' },
+                { title: '演示', name: 'demo' },
               ],
             },
           },

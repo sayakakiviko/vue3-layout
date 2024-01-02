@@ -27,12 +27,8 @@
         <el-icon size="22" style="outline: none"><Refresh /></el-icon>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="userStore.changeLanguage('zh')">
-              简体中文
-            </el-dropdown-item>
-            <el-dropdown-item @click="userStore.changeLanguage('en')">
-              English
-            </el-dropdown-item>
+            <el-dropdown-item @click="userStore.changeLanguage('zh')">简体中文</el-dropdown-item>
+            <el-dropdown-item @click="userStore.changeLanguage('en')">English</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -84,20 +80,16 @@
 </template>
 
 <script setup>
-import Breadcrumb from './breadcrumb.vue';
+import Breadcrumb from './Breadcrumb.vue';
 import Search from './Search.vue';
 import SettingDrawer from './SettingDrawer.vue';
 import { useUserStore } from '@/store';
 import { ElMessageBox } from 'element-plus';
 
 const state = reactive({
-  data: {
-    showDrawer: false, //是否显示抽屉
-    activeName: 'notice', //消息通知的激活项
-  },
+  showDrawer: false, //是否显示抽屉
+  activeName: 'notice', //消息通知的激活项
 });
-const { data } = toRefs(state);
-const vm = state.data;
 
 const router = useRouter();
 const userStore = useUserStore();

@@ -63,6 +63,41 @@ button {
   cursor: pointer;
 }
 
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* 滚动条优化 start */
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-corner {
+  background: #fff;
+}
+
+::-webkit-scrollbar {
+  height: 10px !important;
+  width: 10px !important;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  border-style: dashed;
+  background-color: rgba(157, 165, 183, 0.4);
+  border-color: transparent;
+  border-width: 2px;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(157, 165, 183, 0.4)
+}
+
+/* 滚动条优化 end */
+
 .fl {
   float: left;
 }
@@ -85,27 +120,57 @@ button {
   text-overflow: ellipsis;
 }
 
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
+.mt10 {
+  margin-top: 10px;
 }
 
-.page-wrap{
+.mt20 {
+  margin-top: 20px;
+}
+
+.mt40 {
+  margin-top: 40px;
+}
+
+.mt60 {
+  margin-top: 60px;
+}
+
+.mb10 {
+  margin-bottom: 10px;
+}
+
+.mb20 {
+  margin-bottom: 20px;
+}
+
+.mb40 {
+  margin-bottom: 40px;
+}
+
+.mb60 {
+  margin-bottom: 60px;
+}
+
+.page-wrap {
   overflow-y: auto;
   background: #fff;
   padding: 20px;
   // height: calc(100% - 40px);
   height: calc(100vh - 190px);
   border-radius: 8px;
+
   h3 {
     display: flex;
     align-items: center;
+
     .el-icon {
       margin-right: 4px;
       padding: 6px;
       color: var(--el-color-primary);
       border-radius: 50%;
-      &.bg{
+
+      &.bg {
         background-color: var(--el-color-primary-light-9);
       }
     }
@@ -119,6 +184,7 @@ table {
   background-color: var(--el-color-white);
   border-radius: 4px;
   box-shadow: var(--el-box-shadow-lighter);
+
   h3 .el-icon {
     margin-right: 4px;
     padding: 6px;
