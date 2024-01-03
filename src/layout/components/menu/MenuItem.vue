@@ -1,10 +1,7 @@
 <!--菜单列表-->
 <template>
   <!--有子菜单-->
-  <el-sub-menu
-    v-if="value.children && value.children.length"
-    :index="value.path"
-  >
+  <el-sub-menu v-if="value.children && value.children.length" :index="value.path">
     <template #title>
       <el-icon v-if="value.meta.icon">
         <component :is="value.meta.icon" />

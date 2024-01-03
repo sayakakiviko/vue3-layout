@@ -101,6 +101,6 @@ window.$message('消息');
     │
     └─utils               //工具类
           axios.js        //请求配置（含接口拦截）
-          directive.js    //全局自定义指令。v-debounce防抖、v-focus自动聚焦、v-jump路由跳转、v-permission权限设置
+          directive.js    //全局自定义指令。v-debounce防抖、v-focus自动聚焦、v-jump路由跳转、v-auth权限设置
           prototype.js    //全局方法。$timeDiff时间戳返回多久以前、$timeFormat格式化时间戳
 </pre>

@@ -86,7 +86,7 @@ import SettingDrawer from './SettingDrawer.vue';
 import { useUserStore } from '@/store';
 import { ElMessageBox } from 'element-plus';
 
-const state = reactive({
+const data = reactive({
   showDrawer: false, //是否显示抽屉
   activeName: 'notice', //消息通知的激活项
 });

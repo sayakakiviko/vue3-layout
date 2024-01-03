@@ -14,11 +14,7 @@
             :unique-opened="useSettingStore().accordion"
             router
           >
-            <MenuItem
-              v-for="(item, index) in menuStore.menuList"
-              :key="index"
-              :value="item"
-            />
+            <MenuItem v-for="(item, index) in menuStore.menuList" :key="index" :value="item" />
           </el-menu>
         </el-scrollbar>
         <div class="collapse-wrapper" @click="isCollapse = !isCollapse">

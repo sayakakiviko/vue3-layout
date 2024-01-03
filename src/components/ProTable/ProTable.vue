@@ -1,11 +1,11 @@
 <!--
     名称：表格组件；如果你想使用 el-table 的任何属性、事件，通过属性透传都能支持，ProTable 组件内部暴露了 el-table DOM，可通过 proTable.value.element.方法名 调用他们
-    属性：详见props
-    插槽：自定义表头插槽为'header列的prop'；设置某列特殊样式插槽为'列的prop'；其他的与element plus表格组件插槽使用方法一致
+    属性：用 v-bind="$attrs" 通过属性透传我们支持 el-table 的所有 Props 属性及 el-table-column 属性。在此基础上，还扩展了一些props。详见props
+    插槽：自定义表头插槽为'header_${列prop}'（如 #header_age）。设置某列特殊样式插槽为'列的prop'（如 #age）；其他的与element plus表格组件插槽使用方法一致
     输出方法：
       selectionChange 复选框发生变化时会触发该事件，返回数组_选择的数据列表；
       radioChange 单选框发生变化时会触发该事件，返回对象_选择的数据；
-      searchTable 搜索框内容改变会触发该事件，非前端分页时返回字符串_搜索的关键字；注：为前端分页时，可不使用该方法，会内部搜索有search标记的列。
+      searchTable 搜索框内容改变会触发该事件，后端分页时返回字符串_搜索的关键字；注：前端分页时，可不使用该方法，会内部搜索有search标记的列。
       pageChange 页码或每页显示数改变会触发该事件，返回参数1为数字_当前页码，返回参数2为数字_每页显示数；注：为前端分页时，可不使用该方法。
                  前端分页开启方法：isPagination为true；pagination的fullData为true。
       confirmSetting 表头设置弹窗点击确定会触发该事件。返回设置的表头
@@ -74,7 +74,7 @@
           prop: 'name',
           label: '姓名',
           filter: 'select',
-          search: true, //该列是否可在顶部搜索框搜索出来（前端分页用）
+          search: true, //该列数据是否可在顶部搜索框搜索出来（前端分页用）
         },
         {
           prop: 'age',
@@ -102,8 +102,6 @@
       ref="tableRef"
       v-bind="$attrs"
       :row-key="rowKey"
-      :border="border"
-      :height="height"
       :data="data.showTableData"
       @selection-change="
         (list) => {
@@ -272,11 +270,6 @@ let searchTableData = []; //搜索框搜索出来的数据（前端分页用）
 const tableRef = ref(null); //表格ref
 
 const props = defineProps({
-  //是否展示边框线
-  border: {
-    type: Boolean,
-    default: false,
-  },
   //是否要设置表头
   isSetting: {
     type: Boolean,
@@ -292,11 +285,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  //表格高度
-  height: {
-    type: Number,
-  },
-  //行数据的 Key，用来优化 Table 的渲染。单选时需要传入rowKey，唯一值，如id、编号
+  // 每行数据的 Key，用来优化 Table 的渲染。单选时需要传入rowKey，唯一值，如id、编号
   rowKey: {
     type: String,
     default: 'id',
@@ -306,7 +295,7 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  //全部的表头
+  //全部的表头。isSetting为true时需要从接口获取数据
   allColumns: {
     type: Array,
     default: () => [],
@@ -329,7 +318,7 @@ const props = defineProps({
         pageSize: 10, //每页显示数
         pageNum: 1, //当前页码
         total: 0, //数据总量
-        fullData: false, //是否全量数据返回
+        fullData: false, //是否全量数据返回。为true时候将开启前端分页
       };
     },
   },

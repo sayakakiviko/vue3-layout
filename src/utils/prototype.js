@@ -50,15 +50,7 @@ const prototype = {
    */
   $timeFormat: (data, format) => {
     format = format || 'YYYY-MM-DD';
-    const week = [
-      '星期日',
-      '星期一',
-      '星期二',
-      '星期三',
-      '星期四',
-      '星期五',
-      '星期六',
-    ];
+    const week = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
     const date = new Date(Number(data));
     const o = {
       'M+': date.getMonth() + 1,
@@ -72,10 +64,7 @@ const prototype = {
       'W+': week[date.getDay()],
     };
     if (/(Y+)/.test(format)) {
-      format = format.replace(
-        RegExp.$1,
-        `${date.getFullYear()}`.substr(4 - RegExp.$1.length),
-      );
+      format = format.replace(RegExp.$1, `${date.getFullYear()}`.substr(4 - RegExp.$1.length));
     }
     for (const k in o) {
       if (new RegExp(`(${k})`).test(format)) {
@@ -93,8 +82,7 @@ const prototype = {
    */
   $makeid: () => {
     let text = '';
-    let possible =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < 7; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }

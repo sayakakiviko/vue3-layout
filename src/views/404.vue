@@ -13,8 +13,7 @@
 .not-found {
   width: 100%;
   height: 100%;
-  background: var(--el-color-white) url('@/assets/images/svg/404.svg') no-repeat
-    center/50vw 50vh;
+  background: var(--el-color-white) url('@/assets/images/svg/404.svg') no-repeat center/50vw 50vh;
 }
 .tips {
   padding-top: 80px;

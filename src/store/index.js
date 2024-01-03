@@ -7,13 +7,7 @@ import { defineStore, createPinia } from 'pinia';
 
 const pinia = createPinia();
 
-export {
-  useUserStore,
-  useMenuStore,
-  useBreadcrumbStore,
-  useNavTabStore,
-  useSettingStore,
-};
+export { useUserStore, useMenuStore, useBreadcrumbStore, useNavTabStore, useSettingStore };
 export default pinia;
 
 export const counterStore = defineStore('counter', {

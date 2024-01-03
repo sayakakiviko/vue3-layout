@@ -1,9 +1,11 @@
 <!--首页-->
 <template>
   <div class="home page-wrap">
-    <el-button type="primary" v-permission="['admin']" @click="dialogShow = true">
+    <el-button type="primary" v-auth="['admin']" @click="dialogShow = true">
       该按钮仅管理员可见
     </el-button>
+    <el-button type="primary" v-jump="['demo', { id: 123 }]">jump link</el-button>
+    <el-button type="primary" v-jump.open="['demo', { id: 123 }]">open link</el-button>
   </div>
 
   <UploadDialog isSingle :isShow="dialogShow" @close="dialogShow = false" @submit="submit" />

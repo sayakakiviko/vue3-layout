@@ -4,15 +4,8 @@ export const useSettingStore = defineStore({
   id: 'setting',
   state: () => ({
     //默认提供的主题色板
-    colorList: [
-      '#409EFF',
-      '#f5222d',
-      '#4fc08d',
-      '#faad14',
-      '#13c2c2',
-      '#722ed1',
-    ],
-    themeColor: sessionStorage.getItem('themeColor') || '#409EFF', //主题色
+    colorList: ['#409EFF', '#f5222d', '#4fc08d', '#faad14', '#13c2c2', '#722ed1'],
+    themeColor: localStorage.getItem('themeColor') || '#409EFF', //主题色
     tabsShow: true, //页签显示状态
     accordion: false, //菜单手风琴模式
   }),
@@ -23,7 +16,7 @@ export const useSettingStore = defineStore({
      * */
     changeThemeColor(color) {
       this.themeColor = color;
-      sessionStorage.setItem('themeColor', color);
+      localStorage.setItem('themeColor', color);
     },
   },
 });

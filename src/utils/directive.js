@@ -9,7 +9,9 @@ const directive = {
    * */
   debounce: {
     mounted: (el, binding) => {
+      if (typeof binding.value !== 'function') throw 'callback must be a function';
       let timer;
+
       el.addEventListener('click', () => {
         if (timer) clearTimeout(timer);
 
@@ -17,6 +19,35 @@ const directive = {
         timer = setTimeout(() => {
           binding.value();
         }, el.delay);
+      });
+    },
+  },
+  /**
+  节流。防止按钮在短时间内被多次点击，使用节流函数限制规定时间内只能点击一次。单位ms，不传参则默认延迟1000ms后才能再执行下次事件
+
+  思路：
+    1、第一次点击，立即调用方法并禁用按钮，等延迟结束再次激活按钮
+    2、将需要触发的方法绑定在指令上
+
+  使用：给 Dom 加上 v-throttle 及回调函数即可
+  <button v-throttle:2000="debounceClick">节流提交</button>
+*/
+  throttle: {
+    mounted: (el, binding) => {
+      if (typeof binding.value !== 'function') throw 'callback must be a function';
+      let timer = null;
+
+      el.addEventListener('click', () => {
+        if (timer) clearTimeout(timer);
+
+        el.delay = binding.arg || 1000; // 延迟时间
+        if (!el.disabled) {
+          el.disabled = true;
+          binding.value();
+          timer = setTimeout(() => {
+            el.disabled = false;
+          }, el.delay);
+        }
       });
     },
   },
@@ -72,11 +103,15 @@ const directive = {
     },
   },
   /**
-   * Vue 跳转指令'v-jump'，调整新页面或url，基于router.push方式
-   * @param name/path 路由名或路径(必传)[eg:home或/home]
+   * Vue 跳转指令'v-jump'，跳转新页面或url，基于router.push方式。
+   * @param name/path 路由名或路径(必传)[eg:home或/home]。path路径跳转请以/开头，与路由表里面的path保持一致（推荐name名称跳转）
    * @param param 参数[eg:{id:123}]
-   * @param type  按什么方式传递参数[1-按路由配置方式[eg:home/123]；2-按param方式[eg:{name/path:'',params:{id:123}}]；3-按query方式(默认)[eg:{name/path:'',query:{id:123}}]]
-   * 例子：<div class="click-wrap" :data-id="item.id" v-jump="['home_detail', {id:123}, 2]">（新窗口打开，只需要添加open修饰符即可：v-jump.open="['home_detail', {id:123}, 2]"）
+   * @param type 按什么方式传递参数
+   * [path-按路由配置方式[eg:home/123]；
+   * params-按param方式(需在路由路径配置，如：path:'/home/:id')  [eg:{name/path:'',params:{id:123}}]；
+   * query-按query方式(默认)  [eg:{name/path:'',query:{id:123}}]]
+   *
+   * 例子：<div class="click-wrap" :data-id="item.id" v-jump="['home_detail', {id:123}, 'params']">（新窗口打开，只需要添加open修饰符即可：v-jump.open="['home_detail', {id:123}]"）
    */
   jump: {
     // el: 指令绑定的元素
@@ -97,47 +132,57 @@ const directive = {
         if (data) {
           const pathName = data[0] || null;
           const param = data[1] || null;
-          const type = data[2] || 3;
+          const type = data[2] || 'query';
           // const vm = vnode['context'];
           // console.log('v-jump数据：', el, pathName, param, type);
           if (pathName) {
             if (pathName.match(new RegExp('^(http|www)'))) {
               location.href = pathName;
             } else {
+              let pathOrName = pathName.slice(0, 1) === '/'; //true为path跳转，否则为name跳转
               let routeData = {};
-              if (type === 1) {
-                /* path类型单独处理参数格式 */
-                const pStr = [];
-                if (param) {
-                  for (const j in param) {
-                    // if (param.hasOwnProperty(j)) {
-                    if (Object.prototype.hasOwnProperty.call(param, j)) {
-                      param[j] ? pStr.push(param[j]) : null;
+
+              switch (type) {
+                case 'path':
+                  /* path类型单独处理参数格式 */
+                  var pStr = [];
+                  if (param) {
+                    for (const j in param) {
+                      // if (param.hasOwnProperty(j)) {
+                      if (Object.prototype.hasOwnProperty.call(param, j)) {
+                        param[j] ? pStr.push(param[j]) : null;
+                      }
                     }
                   }
-                }
-                routeData = {
-                  path: `/${pathName}${param ? `/${pStr.join('/')}` : ''}`,
-                };
-              }
-              if (type === 2) {
-                routeData = {
-                  name: pathName,
-                  params: param,
-                };
-              }
-              if (type === 3) {
-                routeData = {
-                  path: `/${pathName}`,
-                  query: param,
-                };
-              } else {
-                routeData = pathName.indexOf('/') > -1 ? { path: pathName } : { name: pathName };
+                  routeData = {
+                    path: `/${pathName}${param ? `/${pStr.join('/')}` : ''}`,
+                  };
+                  break;
+                case 'params': //params传参
+                  if (pathOrName) {
+                    routeData = { path: pathName, params: param };
+                  } else {
+                    routeData = { name: pathName, params: param };
+                  }
+                  break;
+                case 'query': //query传参
+                  if (pathOrName) {
+                    routeData = { path: pathName, query: param };
+                  } else {
+                    routeData = { name: pathName, query: param };
+                  }
+                  break;
+                // default:
+                //   routeData = pathName.indexOf('/') > -1 ? { path: pathName } : { name: pathName };
+                //   break;
               }
 
               if (binding.modifiers.open) {
                 //新窗口打开
-                window.open(routeData, '_blank');
+                const url = router.resolve(routeData);
+                window.open(url.href, '_blank');
+              } else if (binding.modifiers.replace) {
+                router.replace(routeData);
               } else {
                 router.push(routeData);
               }
@@ -160,9 +205,9 @@ const directive = {
   },
   /**
    * 权限指令。被设置的元素只会为有权限的角色展示
-   * 例子： <el-button v-permission="['admin','user']>提交</el-button>
+   * 例子： <el-button v-auth="['admin','user']>提交</el-button>
    * */
-  permission: {
+  auth: {
     mounted(el, binding) {
       const userStore = useUserStore();
       const { userInfo } = userStore;
@@ -179,7 +224,7 @@ const directive = {
           }
         }
       } else {
-        throw new Error(`请正确设置权限! 如 v-permission="['admin','user']"`);
+        throw new Error(`请正确设置权限! 如 v-auth="['admin','user']"`);
       }
     },
   },
