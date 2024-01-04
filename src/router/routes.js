@@ -31,53 +31,12 @@ const routes = [
         meta: { id: '1', title: '首页', icon: 'location' }, //icon：显示在菜单上的图标
       },
       {
-        path: '/hello',
-        name: 'hello',
-        redirect: '/hello/index',
-        // component: () => import('@/views/hello.vue'), // 路由懒加载
-        menu: true,
-        meta: { id: '2', title: 'hello', icon: 'setting', keepAlive: true },
-        children: [
-          {
-            path: '/hello/index',
-            name: 'hello',
-            component: () => import('@/views/hello.vue'), // 路由懒加载
-            menu: true,
-            meta: {
-              keepAlive: true,
-              id: '2-1',
-              title: '你好',
-              icon: 'document',
-              breadcrumb: [
-                { title: 'hello', name: 'hello' },
-                { title: '你好', name: 'hello' },
-              ],
-            },
-          },
-          {
-            path: '/hello/demo',
-            name: 'demo',
-            component: () => import('@/views/demo.vue'), // 路由懒加载
-            menu: true,
-            meta: {
-              keepAlive: true,
-              id: '2-2',
-              title: '演示',
-              breadcrumb: [
-                { title: 'hello', name: 'hello' },
-                { title: '演示', name: 'demo' },
-              ],
-            },
-          },
-        ],
-      },
-      {
         path: '/usedComponents',
         name: 'usedComponents',
         redirect: '/usedComponents/proTablePart',
         // component: () => import('@/views/hello.vue'), // 路由懒加载
         menu: true,
-        meta: { id: '3', title: '常用组件', icon: 'setting' },
+        meta: { id: '2', title: '常用组件', icon: 'setting' },
         children: [
           {
             path: '/usedComponents/proTablePart',
@@ -85,11 +44,51 @@ const routes = [
             component: () => import('@/views/usedComponents/proTablePart.vue'), // 路由懒加载
             menu: true,
             meta: {
-              id: '3-1',
+              keepAlive: true,
+              id: '2-1',
               title: '表格组件',
               breadcrumb: [
                 { title: '常用组件', name: 'usedComponents' },
                 { title: '表格组件', name: 'proTablePart' },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        path: '/other',
+        name: 'other',
+        redirect: '/other/demo',
+        menu: true,
+        meta: { id: '3', title: '其他', icon: 'star', keepAlive: true },
+        children: [
+          {
+            path: '/other/demo',
+            name: 'demo',
+            component: () => import('@/views/other/demo.vue'), // 路由懒加载
+            menu: true,
+            meta: {
+              keepAlive: true,
+              id: '3-1',
+              title: '演示',
+              icon: 'document',
+              breadcrumb: [
+                { title: '其他', name: 'other' },
+                { title: '演示', name: 'demo' },
+              ],
+            },
+          },
+          {
+            path: '/other/directive',
+            name: 'directive',
+            component: () => import('@/views/other/directive.vue'), // 路由懒加载
+            menu: true,
+            meta: {
+              id: '3-2',
+              title: '自定义指令',
+              breadcrumb: [
+                { title: '其他', name: 'other' },
+                { title: '自定义指令', name: 'directive' },
               ],
             },
           },

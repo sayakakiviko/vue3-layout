@@ -4,14 +4,15 @@
     输出：close方法：关闭弹窗，清空文件数组 。   submit方法 ： 确定上传，传出文件属性
  -->
 <template>
-  <div class="selectedDialog">
+  <div class="upload-dialog">
     <el-dialog
+      draggable
+      destroy-on-close
       v-model="isShowDialog"
       :title="title"
+      :close-on-click-modal="false"
       width="600"
       @close="close"
-      destroy-on-close
-      :close-on-click-modal="false"
     >
       <slot name="topContent"></slot>
       <el-upload
@@ -25,9 +26,6 @@
         :limit="limit"
         :on-exceed="onExceed"
       >
-        <!--<el-icon size="60">-->
-        <!--  <svg><use xlink:href="#icon-shangchuanwenjian"></use></svg>-->
-        <!--</el-icon>-->
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
         <div class="el-upload__text">
           将文件拖拽支至此处，或者点击
@@ -43,9 +41,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="close">取消</el-button>
-          <el-button type="primary" :loading="isLoading" :disabled="disabled" @click="submit">
-            确认
-          </el-button>
+          <el-button type="primary" :loading="isLoading" @click="submit">确认</el-button>
         </span>
       </template>
     </el-dialog>
@@ -80,7 +76,6 @@ const props = defineProps({
   },
 });
 
-const disabled = ref(false); //提交禁用
 const isLoading = ref(false); //加载状态
 const isShowDialog = ref(false); //弹窗显示状态
 const fileList = ref([]); //附件列表
@@ -89,28 +84,24 @@ watch(
   () => props.isShow,
   (newVal) => {
     isShowDialog.value = newVal;
-    if (!newVal) isLoading.value = false;
+    !newVal && (isLoading.value = false);
   },
 );
 //监听上传的文件类型
 watch(
   () => fileList.value,
   (newVal) => {
-    disabled.value = false;
     for (let item of newVal) {
       let fileName = item.name;
       let dotIndex = fileName.lastIndexOf('.'); //找到后缀名的.
       let type = fileName.substring(dotIndex + 1, fileName.length); //文件类型
 
-      if (props.accept && !props.accept.includes(type)) {
-        disabled.value = true;
+      if (props.accept && !props.accept.includes(type))
         return window.$message.error('请上传符合要求的文件格式');
-      }
     }
   },
 );
 
-const emit = defineEmits(['close', 'submit']);
 /**
  * 超出上传文件数量限制
  * @files {array} 上传的文件
@@ -128,6 +119,7 @@ const onExceed = (files) => {
  * 关闭弹窗
  * */
 const close = () => {
+  isLoading.value = false;
   fileList.value = [];
   emit('close', false);
 };
@@ -140,13 +132,12 @@ const submit = () => {
   emit('submit', fileList.value);
 };
 
-defineExpose({
-  isLoading,
-});
+const emit = defineEmits(['close', 'submit']);
+defineExpose({ isLoading });
 </script>
 
 <style scoped lang="less">
-.selectedDialog {
+.upload-dialog {
   :deep .el-dialog__header {
     border-bottom: 1px solid var(--el-border-color);
     margin-right: 0;

@@ -33,7 +33,7 @@
                   关闭其他
                 </el-dropdown-item>
                 <el-dropdown-item @click="navTabStore.closeNavTab(item.path, 'all')">
-                  关闭所有
+                  关闭全部
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>

@@ -38,9 +38,9 @@
         </child>
       </el-form-item>
       <el-form-item label="路由跳转：">
-        <el-button v-jump="['hello', { id: 321 }]">push跳转</el-button>
+        <el-button v-jump="['home', { id: 321 }]">push跳转</el-button>
         <!--<el-button @click="goToHello">push跳转</el-button>-->
-        <router-link to="/hello">router link</router-link>
+        <router-link to="/home">router link</router-link>
       </el-form-item>
     </el-form>
   </div>
@@ -217,22 +217,13 @@ const addAge = () => {
   useUserInfo.addAge();
 };
 
-function goToHello() {
-  router.push({
-    name: 'hello',
-    query: {
-      id: 123,
-    },
-  });
-}
-
-function add() {
+const add = () => {
   state.num++;
-}
+};
 
-function changeTitle(val) {
+const changeTitle = (val) => {
   state.childTitle = val;
-}
+};
 </script>
 
 <style lang="less" scoped>

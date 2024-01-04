@@ -58,7 +58,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TableSearch: typeof import('./src/components/ProTable/components/tableSearch.vue')['default']
-    UploadDialog: typeof import('./src/components/uploadDialog.vue')['default']
+    UploadDialog: typeof import('./src/components/UploadDialog.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
