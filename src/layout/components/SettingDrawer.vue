@@ -34,6 +34,15 @@
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="12">页签风格：</el-col>
+          <el-col :span="12">
+            <el-select v-model="settingStore.tabsStyle" size="small" style="width: 100px">
+              <el-option label="卡片" value="card" />
+              <el-option label="间隔卡片" value="cardSpace" />
+            </el-select>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">菜单手风琴模式：</el-col>
           <el-col :span="12">
             <el-switch v-model="settingStore.accordion" />

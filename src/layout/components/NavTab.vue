@@ -1,10 +1,10 @@
 <!--标签导航栏-->
 <template>
-  <div class="nav-tab">
+  <div class="nav-tab" :class="settingStore.tabsStyle">
     <el-tabs
-      :model-value="route.path"
-      type="card"
       closable
+      type="card"
+      :model-value="route.path"
       @tab-remove="removeTab"
       @tab-click="tabClick"
     >
@@ -45,11 +45,12 @@
 </template>
 
 <script setup>
-import { useNavTabStore } from '@/store';
+import { useNavTabStore, useSettingStore } from '@/store';
 
 const route = useRoute();
 const router = useRouter();
 const navTabStore = useNavTabStore();
+const settingStore = useSettingStore(); //配置的store
 
 /**
  * 点击标签
@@ -116,6 +117,20 @@ const dropdownVisible = (visible, index) => {
     }
     .el-tabs__content {
       display: none;
+    }
+  }
+}
+.cardSpace {
+  :deep(.el-tabs__header) {
+    .el-tabs__nav {
+      border: none;
+    }
+    .el-tabs__item.is-closable {
+      margin: 1px 8px 0 0;
+      border: 1px solid var(--el-border-color-light);
+      border-bottom: none;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
     }
   }
 }
