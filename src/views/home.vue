@@ -5,7 +5,7 @@
     <el-button type="primary" @click="dialogShow = true">上传</el-button>
   </div>
 
-  <UploadDialog isSingle :isShow="dialogShow" @close="dialogShow = false" @submit="submit" />
+  <UploadDialog multiple v-model:isShow="dialogShow" :limit="2" @submit="submit" />
 </template>
 
 <script setup name="Home">

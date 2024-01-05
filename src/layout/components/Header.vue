@@ -11,7 +11,7 @@
       <el-popover placement="bottom" :width="260">
         <template #reference>
           <el-badge is-dot style="cursor: pointer">
-            <el-icon size="22"><Bell /></el-icon>
+            <el-icon size="20"><Bell /></el-icon>
           </el-badge>
         </template>
         <template #default>
@@ -24,7 +24,7 @@
 
       <!--语言切换-->
       <el-dropdown class="language">
-        <el-icon size="22" style="outline: none"><Refresh /></el-icon>
+        <el-icon size="22" style="outline: none"><SwitchFilled /></el-icon>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="userStore.changeLanguage('zh')">简体中文</el-dropdown-item>

@@ -439,11 +439,8 @@ const changeFilter = (column, info, filterType) => {
     const startIndex = (pageable.value.pageNum - 1) * pageable.value.pageSize;
     let list = props.tableData.slice(startIndex, startIndex + pageable.value.pageSize); //当前页的数据
     tempList = [list]; //过滤过程中使用的临时二维数组
-
-    filterRes(tempList);
-  } else {
-    filterRes(tempList);
   }
+  filterRes(tempList);
 
   //若有排序需保持排序
   nextTick(() => {

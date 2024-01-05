@@ -39,6 +39,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'), // 设置 `@` 指向 `src` 目录
+      'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js',
     },
   },
   base: './', // 设置打包路径

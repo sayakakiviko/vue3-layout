@@ -12,14 +12,19 @@ const directive = {
       if (typeof binding.value !== 'function') throw 'callback must be a function';
       let timer;
 
-      el.addEventListener('click', () => {
+      el.handler = () => {
         if (timer) clearTimeout(timer);
 
         el.delay = binding.arg || 300; // 延迟时间, 默认0.3秒后执行
         timer = setTimeout(() => {
           binding.value();
         }, el.delay);
-      });
+      };
+      el.addEventListener('click', el.handler);
+    },
+    unmounted(el) {
+      /* 为Dom移除事件 */
+      el.removeEventListener('click', el.handler);
     },
   },
   /**
@@ -37,7 +42,7 @@ const directive = {
       if (typeof binding.value !== 'function') throw 'callback must be a function';
       let timer = null;
 
-      el.addEventListener('click', () => {
+      el.handler = () => {
         if (timer) clearTimeout(timer);
 
         el.delay = binding.arg || 1000; // 延迟时间
@@ -48,7 +53,12 @@ const directive = {
             el.disabled = false;
           }, el.delay);
         }
-      });
+      };
+      el.addEventListener('click', el.handler);
+    },
+    unmounted(el) {
+      /* 为Dom移除事件 */
+      el.removeEventListener('click', el.handler);
     },
   },
   /** 文本框自动聚焦 */

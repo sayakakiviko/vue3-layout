@@ -65,7 +65,6 @@ const props = defineProps({
     default: false,
   },
 });
-const emit = defineEmits(['update:showDrawer']);
 
 //是否显示抽屉
 const isOpen = computed({
@@ -85,6 +84,8 @@ const change = (val) => {
   changeTheme(val);
   settingStore.changeThemeColor(settingStore.themeColor);
 };
+
+const emit = defineEmits(['update:showDrawer']);
 </script>
 
 <style lang="less">

@@ -9,7 +9,6 @@ import VueI18n from '@/i18n';
 import directive from '@/utils/directive'; //自定义指令
 import prototype from '@/utils/prototype'; //全局方法
 import piniaPluginPersist from 'pinia-plugin-persist'; //pinia持久化插件
-
 import 'element-plus/dist/index.css';
 import '@/assets/css/base.less';
 

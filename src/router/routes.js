@@ -36,7 +36,7 @@ const routes = [
         redirect: '/usedComponents/proTablePart',
         // component: () => import('@/views/hello.vue'), // 路由懒加载
         menu: true,
-        meta: { id: '2', title: '常用组件', icon: 'setting' },
+        meta: { id: '2', title: '组件示例', icon: 'setting' },
         children: [
           {
             path: '/usedComponents/proTablePart',
@@ -48,7 +48,7 @@ const routes = [
               id: '2-1',
               title: '表格组件',
               breadcrumb: [
-                { title: '常用组件', name: 'usedComponents' },
+                { title: '组件示例', name: 'usedComponents' },
                 { title: '表格组件', name: 'proTablePart' },
               ],
             },
