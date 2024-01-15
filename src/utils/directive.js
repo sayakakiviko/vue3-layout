@@ -117,9 +117,13 @@ const directive = {
    * @param name/path 路由名或路径(必传)[eg:home或/home]。path路径跳转请以/开头，与路由表里面的path保持一致（推荐name名称跳转）
    * @param param 参数[eg:{id:123}]
    * @param type 按什么方式传递参数
-   * [path-按路由配置方式[eg:home/123]；
-   * params-按param方式(需在路由路径配置，如：path:'/home/:id')  [eg:{name/path:'',params:{id:123}}]；
-   * query-按query方式(默认)  [eg:{name/path:'',query:{id:123}}]]
+   * path-按路由配置方式[eg:home/123]；
+   *
+   * params-按params方式(若要入参体现在url上，需在路由路径上配置，如：path:'/detail/:id')
+   *    例1（path方式）：v-jump="['/detail/1', {}, 'params']" 入参体现在url上
+   *    例2（name方式）：v-jump="['detail', { id: 2 }, 'params']" 若路由配置id传参则会体现在url，否则只是传参
+   *
+   * query-按query方式(默认)  v-jump="['home', { id: 321 }]"
    *
    * 例子：<div class="click-wrap" :data-id="item.id" v-jump="['home_detail', {id:123}, 'params']">（新窗口打开，只需要添加open修饰符即可：v-jump.open="['home_detail', {id:123}]"）
    */

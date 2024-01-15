@@ -92,6 +92,20 @@ const routes = [
               ],
             },
           },
+          {
+            path: '/other/detail/:id',
+            name: 'detail',
+            component: () => import('@/views/other/detail.vue'), // 路由懒加载
+            menu: true,
+            meta: {
+              id: '3-3',
+              title: '详情页',
+              breadcrumb: [
+                { title: '其他', name: 'other' },
+                { title: '详情页', name: 'detail' },
+              ],
+            },
+          },
         ],
       },
     ],
