@@ -1,14 +1,14 @@
 // import Vue from 'vue';
 import { createI18n } from 'vue-i18n';
-import LangZh from './lang/zh';
-import LangEn from './lang/en';
+import zh_CN from './lang/zh_CN';
+import en_US from './lang/en_US';
 
 // 注册i8n实例并引入语言文件
 const i18n = createI18n({
   locale: 'zh', // 默认显示的语言
   messages: {
-    zh: LangZh, // 引入语言文件
-    en: LangEn,
+    zh: zh_CN, // 引入语言文件
+    en: en_US,
   },
 });
 

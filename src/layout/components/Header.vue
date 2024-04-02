@@ -43,7 +43,7 @@
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="data.showDrawer = true">
-              {{ $t('header.global') }}
+              {{ $t('顶部栏.全局配置') }}
             </el-dropdown-item>
             <!--语言切换-->
             <!--<el-dropdown-item class="language" style="padding: 8px 16px">
@@ -67,7 +67,7 @@
               </el-dropdown>
             </el-dropdown-item>-->
             <el-dropdown-item @click="logout">
-              {{ $t('header.logout') }}
+              {{ $t('顶部栏.退出登录') }}
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>

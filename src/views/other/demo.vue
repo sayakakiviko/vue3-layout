@@ -2,7 +2,7 @@
   <div class="main">
     <el-form class="demo-form-inline" style="margin: auto; width: 500px">
       <el-form-item label="国际化：">
-        {{ $t('theme.title') }}
+        {{ $t('主题.标题') }}
         <el-select v-model="$i18n.locale">
           <el-option
             v-for="(locale, index) in $i18n.availableLocales"
