@@ -1,8 +1,14 @@
 <!--全局搜索-->
 <template>
-  <el-input v-model="data.keyword" placeholder="请输入搜索关键字" class="search" @change="onSearch">
+  <el-input
+    v-model="data.keyword"
+    :placeholder="$t('请输入')"
+    class="search"
+    size="small"
+    @keydown.enter="onSearch"
+  >
     <template #prepend>
-      <el-select v-model.trim="data.selectVal">
+      <el-select v-model.trim="data.selectVal" size="small">
         <el-option
           v-for="item in data.selectList"
           :key="item.value"
@@ -12,15 +18,20 @@
       </el-select>
     </template>
     <template #append>
-      <el-button :icon="Search" @click="onSearch" />
+      <el-button :icon="Search" size="small" @click="onSearch" />
     </template>
   </el-input>
 
   <!--全局搜索弹窗-->
   <el-dialog v-model="data.searchVisible" title="全局搜索">
-    <el-input v-model.trim="data.keyword" placeholder="请输入搜索关键字" class="search">
+    <el-input
+      v-model.trim="data.keyword"
+      :placeholder="$t('请输入')"
+      class="search"
+      size="small"
+    >
       <template #prepend>
-        <el-select v-model="data.selectVal">
+        <el-select v-model="data.selectVal" size="small">
           <el-option
             v-for="item in data.selectList"
             :key="item.value"
@@ -30,7 +41,7 @@
         </el-select>
       </template>
       <template #append>
-        <el-button :icon="Search" />
+        <el-button :icon="Search" size="small" />
       </template>
     </el-input>
     <el-table :data="data.tableData">
@@ -75,15 +86,16 @@ data.selectList = [
 const onSearch = () => {
   if (!data.keyword) return window.$message.error('搜索内容不能为空');
   data.searchVisible = true;
+  console.log(123);
 };
 </script>
 
 <style scoped lang="less">
 .search {
-  width: 320px;
+  width: 260px;
   background-color: var(--el-color-info-light-9);
   :deep(.el-select) {
-    width: 80px;
+    width: 60px;
     font-size: 12px;
     .el-input__wrapper {
       padding: 1px 5px;

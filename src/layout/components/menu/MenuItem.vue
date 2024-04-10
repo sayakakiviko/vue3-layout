@@ -6,7 +6,7 @@
       <el-icon v-if="value.meta.icon">
         <component :is="value.meta.icon" />
       </el-icon>
-      <span>{{ value.meta.title }}</span>
+      <span>{{ $t(value.meta.title) }}</span>
     </template>
     <MenuItem
       v-for="(item, index) in value.children"
@@ -20,7 +20,7 @@
     <el-icon v-if="value.meta.icon">
       <component :is="value.meta.icon" />
     </el-icon>
-    <span>{{ value.meta.title }}</span>
+    <span>{{ $t(value.meta.title) }}</span>
   </el-menu-item>
 </template>
 

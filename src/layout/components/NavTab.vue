@@ -20,20 +20,20 @@
             trigger="contextmenu"
             @visible-change="(visible) => dropdownVisible(visible, index)"
           >
-            <span class="el-dropdown-link">{{ item.title }}</span>
+            <span class="el-dropdown-link">{{ $t(item.title) }}</span>
             <template #dropdown v-if="item.contextmenu">
               <el-dropdown-menu>
                 <el-dropdown-item @click="navTabStore.closeNavTab(item.path, 'left', route)">
-                  关闭左侧
+                  {{ $t('顶部栏.关闭左侧') }}
                 </el-dropdown-item>
                 <el-dropdown-item @click="navTabStore.closeNavTab(item.path, 'right', route)">
-                  关闭右侧
+                  {{ $t('顶部栏.关闭右侧') }}
                 </el-dropdown-item>
                 <el-dropdown-item @click="navTabStore.closeNavTab(item.path, 'other', route)">
-                  关闭其他
+                  {{ $t('顶部栏.关闭其他') }}
                 </el-dropdown-item>
                 <el-dropdown-item @click="navTabStore.closeNavTab(item.path, 'all')">
-                  关闭全部
+                  {{ $t('顶部栏.关闭全部') }}
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>

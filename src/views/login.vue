@@ -50,6 +50,7 @@ import { useUserStore } from '@/store';
 
 const userStore = useUserStore();
 const router = useRouter();
+const route = useRoute();
 //账号、密码
 const formLogin = reactive({
   username: 'admin',
@@ -78,7 +79,10 @@ const onLogin = () => {
       avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
     };
     userStore.login(userInfo);
-    router.push('/');
+    // 有路径登录就调回原路径  没有跳主页
+    const return_url = route.query.return_url || '/';
+    router.push(return_url);
+    // router.push('/');
   }, 600);
 };
 </script>

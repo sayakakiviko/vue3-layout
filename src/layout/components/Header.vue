@@ -3,14 +3,14 @@
   <el-header>
     <!--<h2>{{ $t('projectName') }}</h2>-->
     <Breadcrumb></Breadcrumb>
-    <el-space wrap size="large">
+    <div class="right-bar">
       <!--搜索-->
       <Search></Search>
 
       <!--消息通知-->
       <el-popover placement="bottom" :width="260">
         <template #reference>
-          <el-badge is-dot style="cursor: pointer">
+          <el-badge is-dot style="margin-top: 4px; cursor: pointer">
             <el-icon size="20"><Bell /></el-icon>
           </el-badge>
         </template>
@@ -36,7 +36,7 @@
       <!--用户信息-->
       <el-dropdown class="user-warp">
         <div class="user">
-          <el-avatar :src="userInfo.avatar" :size="32" />
+          <el-avatar :src="userInfo.avatar" :size="24" />
           <el-text>{{ userInfo.name }}</el-text>
           <el-icon color="#999"><CaretBottom /></el-icon>
         </div>
@@ -72,7 +72,7 @@
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-    </el-space>
+    </div>
   </el-header>
 
   <!--全局配置抽屉-->
@@ -92,6 +92,7 @@ const data = reactive({
 });
 
 const router = useRouter();
+const route = useRoute();
 const userStore = useUserStore();
 const { userInfo } = userStore;
 
@@ -106,7 +107,8 @@ const logout = () => {
   })
     .then(() => {
       userStore.logout();
-      router.replace('/login');
+      router.replace('/login?return_url=' + encodeURIComponent(route.fullPath));
+      // router.replace('/login');
     })
     .catch(() => {});
 };
@@ -119,15 +121,23 @@ const logout = () => {
   align-items: center;
   background-color: var(--el-color-white);
   border-bottom: 1px solid #ddd;
+  .right-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    & > div {
+      margin-left: 14px;
+    }
+  }
   .language {
-    margin-top: -8px;
+    margin-top: -4px;
     color: #333;
     cursor: pointer;
   }
   .user {
     display: flex;
     align-items: center;
-    margin-top: -10px;
+    margin-top: -4px;
     cursor: pointer;
     outline: none;
     .el-text {

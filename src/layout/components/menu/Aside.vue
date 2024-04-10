@@ -19,8 +19,8 @@
         </el-scrollbar>
         <div class="collapse-wrapper" @click="isCollapse = !isCollapse">
           <el-icon>
-            <ArrowLeftBold v-show="!isCollapse" />
-            <ArrowRightBold v-show="isCollapse" />
+            <Fold v-show="!isCollapse" />
+            <Expand v-show="isCollapse" />
           </el-icon>
         </div>
       </div>
@@ -35,6 +35,23 @@ import { useMenuStore, useSettingStore } from '@/store';
 const menuStore = useMenuStore();
 const router = useRouter();
 const isCollapse = ref(false); //是否折叠菜单
+
+// 监听窗口大小变化，折叠侧边栏
+const screenWidth = ref(0);
+let timer = null;
+
+const listeningWindow = () => {
+  timer && clearTimeout(timer);
+  timer = setTimeout(() => {
+    screenWidth.value = document.body.clientWidth;
+    if (!isCollapse.value && screenWidth.value < 1200) isCollapse.value = true;
+    if (isCollapse.value && screenWidth.value > 1200) isCollapse.value = false;
+  }, 100);
+};
+window.addEventListener('resize', listeningWindow, false);
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', listeningWindow);
+});
 </script>
 
 <style scoped lang="less">

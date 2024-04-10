@@ -26,7 +26,7 @@
       >
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
         <div class="el-upload__text">
-          将文件拖拽支至此处，或者点击
+          将文件拖拽至此处，或者点击
           <el-button>
             <el-icon class="el-icon--right"><Upload /></el-icon>
             点击上传

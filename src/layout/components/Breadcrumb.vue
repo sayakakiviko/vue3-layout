@@ -8,7 +8,7 @@
           item.name && index < breadcrumbStore.breadcrumb.length - 1 ? { name: item.name } : null
         "
       >
-        {{ item.title }}
+        {{ $t(item.title) }}
       </el-breadcrumb-item>
     </el-breadcrumb>
   </div>

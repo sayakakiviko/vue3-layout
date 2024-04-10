@@ -13,7 +13,7 @@ const directive = {
       let timer;
 
       el.handler = () => {
-        if (timer) clearTimeout(timer);
+        timer && clearTimeout(timer);
 
         el.delay = binding.arg || 300; // 延迟时间, 默认0.3秒后执行
         timer = setTimeout(() => {

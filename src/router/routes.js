@@ -72,6 +72,7 @@ const routes = [
               id: '3-1',
               title: '演示',
               icon: 'document',
+              roles: ['user'], //roles的值代表哪些角色可以进入此路由
               breadcrumb: [
                 { title: '其他', name: 'other' },
                 { title: '演示', name: 'demo' },
@@ -116,7 +117,7 @@ const routes = [
     name: '404',
     component: () => import('@/views/404.vue'),
     menu: true,
-    meta: { title: '404', keepAlive: false, roles: ['user'] }, //roles的值代表哪些角色可以进入此路由
+    meta: { title: '404', keepAlive: false },
     // 单独的前置路由守卫
     beforeEnter: (to, from) => {
       document.title = '欢迎学习vue3';
