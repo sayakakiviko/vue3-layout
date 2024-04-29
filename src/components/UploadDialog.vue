@@ -10,7 +10,7 @@
       draggable
       destroy-on-close
       v-model="isShowDialog"
-      :title="title"
+      :title
       :close-on-click-modal="false"
       width="600"
       @close="close"
@@ -22,7 +22,7 @@
         v-model:file-list="fileList"
         v-bind="$attrs"
         :auto-upload="false"
-        :on-exceed="onExceed"
+        :onExceed
       >
         <el-icon class="el-icon--upload"><upload-filled /></el-icon>
         <div class="el-upload__text">
@@ -39,7 +39,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="close">取消</el-button>
-          <el-button type="primary" :loading="isLoading" @click="submit">确认</el-button>
+          <el-button type="primary" :loading @click="submit">确认</el-button>
         </span>
       </template>
     </el-dialog>
@@ -49,11 +49,6 @@
 <script setup>
 const attrs = useAttrs(); //js 里使用 $attrs
 const props = defineProps({
-  //是否展示弹窗
-  isShow: {
-    type: Boolean,
-    default: false,
-  },
   //弹窗标题
   title: {
     type: String,
@@ -61,8 +56,9 @@ const props = defineProps({
   },
 });
 
-const isLoading = ref(false); //加载状态
+const loading = ref(false); //加载状态
 const fileList = ref([]); //附件列表
+const isShowDialog = defineModel(); //弹窗显示状态
 
 //监听上传的文件类型
 watch(
@@ -78,14 +74,6 @@ watch(
     }
   },
 );
-
-//弹窗显示状态
-const isShowDialog = computed({
-  get: () => props.isShow,
-  set: (val) => {
-    emit('update:isShow', false); // 触发父组件值更新
-  },
-});
 
 /**
  * 超出上传文件数量限制
@@ -104,7 +92,7 @@ const onExceed = (files) => {
  * 关闭弹窗
  * */
 const close = () => {
-  isLoading.value = false;
+  loading.value = false;
   fileList.value = [];
   isShowDialog.value = false;
 };
@@ -113,11 +101,11 @@ const close = () => {
  * */
 const submit = () => {
   if (!fileList.value.length) return window.$message.warning('请添加附件');
-  isLoading.value = true;
+  loading.value = true;
   emit('submit', fileList.value);
 };
 
-const emit = defineEmits(['update:isShow', 'submit']);
+const emit = defineEmits(['submit']);
 </script>
 
 <style scoped lang="less">

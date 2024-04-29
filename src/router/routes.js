@@ -78,6 +78,10 @@ const routes = [
                 { title: '演示', name: 'demo' },
               ],
             },
+            // 单独的前置路由守卫
+            beforeEnter: (to, from) => {
+              document.title = '欢迎学习vue3';
+            },
           },
           {
             path: '/other/directive',
@@ -112,17 +116,12 @@ const routes = [
     ],
   },
   //Layout容器外的路由
-  {
-    path: '/404',
-    name: '404',
-    component: () => import('@/views/404.vue'),
-    menu: true,
-    meta: { title: '404', keepAlive: false },
-    // 单独的前置路由守卫
-    beforeEnter: (to, from) => {
-      document.title = '欢迎学习vue3';
-    },
-  },
+  // {
+  //   path: '/404',
+  //   name: '404',
+  //   component: () => import('@/views/404.vue'),
+  //   meta: { title: '404', keepAlive: false },
+  // },
 ];
 
 export default routes;

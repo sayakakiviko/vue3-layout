@@ -1,8 +1,8 @@
 <!--抽屉-全局配置-->
 <template>
-  <el-drawer v-model="isOpen" :size="300">
+  <el-drawer v-model="showDrawer" :size="300">
     <template #header>
-      <label>全局配置</label>
+      <label>{{ $t('系统文本.全局配置') }}</label>
     </template>
     <template #default>
       <!--<div class="theme">-->
@@ -16,9 +16,9 @@
       <!--  </div>-->
       <!--</div>-->
       <div class="content">
-        <el-divider content-position="left">界面显示</el-divider>
+        <el-divider content-position="left">{{ $t('系统文本.界面显示') }}</el-divider>
         <el-row>
-          <el-col :span="12">主题颜色：</el-col>
+          <el-col :span="12">{{ $t('系统文本.主题颜色') }}：</el-col>
           <el-col :span="12">
             <el-color-picker
               v-model="settingStore.themeColor"
@@ -28,24 +28,27 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">页签显示：</el-col>
+          <el-col :span="12">{{ $t('系统文本.页签显示') }}：</el-col>
           <el-col :span="12">
             <el-switch v-model="settingStore.tabsShow" />
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">页签风格：</el-col>
+          <el-col :span="12">{{ $t('系统文本.页签风格') }}：</el-col>
           <el-col :span="12">
             <el-select v-model="settingStore.tabsStyle" size="small" style="width: 100px">
-              <el-option label="卡片" value="card" />
-              <el-option label="间隔卡片" value="cardSpace" />
+              <el-option :label="$t('系统文本.卡片')" value="card" />
+              <el-option :label="$t('系统文本.间隔卡片')" value="cardSpace" />
             </el-select>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">菜单手风琴模式：</el-col>
+          <el-col :span="12">{{ $t('系统文本.菜单模式') }}：</el-col>
           <el-col :span="12">
-            <el-switch v-model="settingStore.accordion" />
+            <el-select v-model="settingStore.accordion" size="small" style="width: 100px">
+              <el-option :label="$t('系统文本.正常')" :value="false" />
+              <el-option :label="$t('系统文本.手风琴')" :value="true" />
+            </el-select>
           </el-col>
         </el-row>
       </div>
@@ -57,25 +60,10 @@
 import { useElementPlusTheme } from 'use-element-plus-theme';
 import { useSettingStore } from '@/store';
 
-/* like props */
-const props = defineProps({
-  //是否显示抽屉
-  showDrawer: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-//是否显示抽屉
-const isOpen = computed({
-  get: () => props.showDrawer,
-  set: (val) => {
-    emit('update:showDrawer', false); // 触发父组件值更新
-  },
-});
-
 const settingStore = useSettingStore(); //配置的store
 const { changeTheme } = useElementPlusTheme(settingStore.themeColor);
+const showDrawer = defineModel();
+
 /**
  * 更换主题色
  * @color {object} 路由对象
@@ -84,8 +72,6 @@ const change = (val) => {
   changeTheme(val);
   settingStore.changeThemeColor(settingStore.themeColor);
 };
-
-const emit = defineEmits(['update:showDrawer']);
 </script>
 
 <style lang="less">

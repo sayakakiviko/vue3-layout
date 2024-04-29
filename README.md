@@ -1,7 +1,7 @@
 # vue3框架
 Vite 搭建的 ts/js + vue3 框架。使用的技术栈有：
 - 编程语言：TypeScript | JavaScript
-- 构建工具：Vite4.x
+- 构建工具：Vite 5.x
 - 前端框架：Vue 3.x
 - 路由工具：Vue Router 4.x
 - 状态管理：Pinia
@@ -11,7 +11,7 @@ Vite 搭建的 ts/js + vue3 框架。使用的技术栈有：
 - 代码规范：EditorConfig + Prettier + ESLint
 - 提交规范：Commitizen
 
-需要node版本 14.18+。
+需要node版本 16+。
 
 安装 `npm i`
 
@@ -83,8 +83,8 @@ window.$message('消息');
     │  │  index.js        //国际化配置文件
     │  │  
     │  └─lang             //语言目录
-    │     en.js           //英文配置
-    │     zh.js           //中文配置
+    │     en_US.js        //英文配置
+    │     zh_CN.js        //中文配置
     │
     ├─layout              //布局
     │     index.vue
@@ -94,7 +94,7 @@ window.$message('消息');
     │
     ├─router              //路由配置
     │     index.js        //路由配置（含路由拦截）
-    │     routes.js      //路由表
+    │     routes.js       //路由表
     │
     ├─store               //pinia目录
     │     index.js

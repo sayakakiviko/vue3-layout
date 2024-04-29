@@ -43,7 +43,7 @@
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="data.showDrawer = true">
-              {{ $t('顶部栏.全局配置') }}
+              {{ $t('系统文本.全局配置') }}
             </el-dropdown-item>
             <!--语言切换-->
             <!--<el-dropdown-item class="language" style="padding: 8px 16px">
@@ -67,7 +67,7 @@
               </el-dropdown>
             </el-dropdown-item>-->
             <el-dropdown-item @click="logout">
-              {{ $t('顶部栏.退出登录') }}
+              {{ $t('系统文本.退出登录') }}
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -76,7 +76,7 @@
   </el-header>
 
   <!--全局配置抽屉-->
-  <SettingDrawer v-model:showDrawer="data.showDrawer"></SettingDrawer>
+  <SettingDrawer v-model="data.showDrawer"></SettingDrawer>
 </template>
 
 <script setup>
@@ -86,6 +86,7 @@ import SettingDrawer from './SettingDrawer.vue';
 import { useUserStore } from '@/store';
 import { ElMessageBox } from 'element-plus';
 
+const instance = getCurrentInstance();
 const data = reactive({
   showDrawer: false, //是否显示抽屉
   activeName: 'notice', //消息通知的激活项
@@ -100,15 +101,15 @@ const { userInfo } = userStore;
  * 退出登录
  * */
 const logout = () => {
-  ElMessageBox.confirm('您确定要退出登录吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+  const $t = instance.proxy.$t;
+  ElMessageBox.confirm($t('系统文本.您确定要退出登录吗'), $t('系统文本.提示'), {
+    confirmButtonText: $t('系统文本.确定'),
+    cancelButtonText: $t('系统文本.取消'),
     type: 'warning',
   })
     .then(() => {
       userStore.logout();
       router.replace('/login?return_url=' + encodeURIComponent(route.fullPath));
-      // router.replace('/login');
     })
     .catch(() => {});
 };
