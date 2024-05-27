@@ -23,7 +23,7 @@ export default defineConfig({
         /\.md$/, // .md
       ],
       imports: ['vue', 'vue-router'],
-      // 可以选择auto-import.d.js生成的位置，使用ts建议设置为'/src/auto-import.d.js'不然会自动生成在根目录
+      // 可以选择auto-import.d.js生成的位置，建议设置为'/src/auto-import.d.js'不然会自动生成在根目录
       dts: 'src/auto-import.d.js',
       // 生成全局声明文件，给eslint用
       eslintrc: {

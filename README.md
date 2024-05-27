@@ -54,40 +54,38 @@ window.$message('消息');
 │  package.json              //package配置
 │  package-lock.json         //package锁定文件
 │  README.md                 //readme
-│  tsconfig.json             //ts配置文件
-│  tsconfig.node.json        //ts node环境配置文件
 │  vite.config.js            //全局配置文件
 │
 ├─public                    //公共资源存放目录
 │      favicon.ico          //网站icon
 │
 └─src
-    │  App.vue             //页面根组件
-    │  auto-import.d.js    //需要自动导入的vue3的api的配置
-    │  main.js             //入口文件
+    │─App.vue              //页面根组件
+    │─auto-import.d.js     //需要自动导入的vue3的api的配置
+    │─main.js              //入口文件
     │  
     ├─api                  //api定义目录
-    │      index.js        //api统一出口文件
-    │      user.js
+    │  ├─index.js          //api统一出口文件
+    │  └─user.js
     │       
     ├─assets               //静态资源目录
     │  ├─css               //样式
     │  ├─iconfont          //字体
     │  ├─images            //图片
     │  └─script            //脚本
-    │       common.js
+    │    └─common.js
     │  
     ├─components           //组件目录
     │
     ├─i18n                //国际化配置目录
-    │  │  index.js        //国际化配置文件
+    │  │─index.js         //国际化配置文件
     │  │  
     │  └─lang             //语言目录
-    │     en_US.js        //英文配置
-    │     zh_CN.js        //中文配置
+    │     ├─en_US.js      //英文配置
+    │     └─zh_CN.js      //中文配置
     │
     ├─layout              //布局
-    │     index.vue
+    │    index.vue
     │
     ├─views               //页面
     │     index.vue

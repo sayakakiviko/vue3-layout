@@ -2,60 +2,63 @@
   <div class="page-wrap">
     <h2 style="margin-bottom: 20px">表格1 - 接口获取表格数据</h2>
     <!--表格-->
-    <ProTable
-      border
-      isSetting
-      isSearch
-      isPagination
-      rowKey="number"
-      ref="proTable"
-      tableName="demo"
-      :height="400"
-      :allColumns="allColumns"
-      :tableData="tableData"
-      :tableColumns="tableColumns"
-      :pagination="page"
-      @pageChange="pageChange"
-      @radioChange="radioChange"
-      @confirmSetting="confirmSetting"
-    >
-      <template #header_age>
-        <el-button type="primary">年龄T</el-button>
-      </template>
+    <div v-loading="loading">
+      <ProTable
+        border
+        isSetting
+        rowKey="number"
+        ref="proTable"
+        tableName="demo"
+        :height="400"
+        :allColumns
+        :tableData
+        :tableColumns
+        :pagination="page"
+        @pageChange="pageChange"
+        @radioChange="radioChange"
+        @confirmSetting="confirmSetting"
+      >
+        <template #header_age>
+          <el-button type="primary">年龄T</el-button>
+        </template>
 
-      <template #expand>展开插槽</template>
-      <template #number="scope">
-        <el-link type="primary">{{ scope.row.number }}</el-link>
-      </template>
-      <template #name="scope">
-        <el-input
-          v-if="scope.row.status === 'edit'"
-          v-model.trim="scope.row.name"
-          placeholder="请输入"
-        />
-        <span v-else>{{ scope.row.name }}</span>
-      </template>
-      <template #handle="scope">
-        <el-space>
-          <el-link type="primary" @click="changeTableData(scope.row)">编辑</el-link>
-          <el-link type="danger">删除</el-link>
-        </el-space>
-      </template>
-    </ProTable>
+        <template #expand>展开的插槽的内容</template>
+        <template #number="scope">
+          <el-link type="primary">{{ scope.row.number }}</el-link>
+        </template>
+        <template #name="scope">
+          <el-input
+            v-if="scope.row.status === 'edit'"
+            v-model.trim="scope.row.name"
+            placeholder="请输入"
+          />
+          <span v-else>{{ scope.row.name }}</span>
+        </template>
+        <template #handle="scope">
+          <el-space>
+            <el-link type="primary" @click="changeTableData(scope.row)">编辑</el-link>
+            <el-link type="danger">删除</el-link>
+          </el-space>
+        </template>
+      </ProTable>
+    </div>
 
     <h2 style="margin-bottom: 20px">表格2 - 本地mock数据（前端分页）</h2>
     <ProTable
+      border
+      isSearch
       isSetting
-      isPagination
       rowKey="number"
       tableName="demo2"
       :allColumns="allColumns"
       :tableData="tableData2"
       :tableColumns="tableColumns2"
       :pagination="page2"
+      @dragSort="dragSort"
       @selectionChange="selectionChange"
       @confirmSetting="confirmSetting"
     >
+      <template #drag>drag</template>
       <template #number="scope">
         <el-link type="primary">{{ scope.row.number }}</el-link>
       </template>
@@ -64,6 +67,7 @@
           v-if="scope.row.status === 'edit'"
           v-model.trim="scope.row.name"
           placeholder="请输入"
+          style="width: 96%"
         />
         <span v-else>{{ scope.row.name }}</span>
       </template>
@@ -79,6 +83,7 @@
 
 <script setup>
 const proTable = ref(null); //表格ref
+const loading = ref(false);
 const allColumns = ref([]); //全部的列
 const tableColumns = ref([
   // {
@@ -91,6 +96,11 @@ const tableColumns = ref([
     align: 'center',
     width: 55,
   },
+  // {
+  //   type: 'drag',
+  //   label: 'drag',
+  //   width: 60,
+  // },
   // {
   //   type: 'expand',
   //   label: '',
@@ -153,12 +163,17 @@ const tableColumns2 = ref([
   //   type: 'expand',
   //   label: '',
   // },
-  //树状表格不建议使用序号
   {
-    type: 'index',
-    label: '序号',
-    width: 70,
+    type: 'drag',
+    label: 'drag',
+    width: 60,
   },
+  //树状表格不建议使用序号
+  // {
+  //   type: 'index',
+  //   label: '序号',
+  //   width: 70,
+  // },
   {
     prop: 'number',
     label: '编号',
@@ -258,7 +273,7 @@ tableData2.value.push(
 );
 
 onMounted(() => {
-  console.log(proTable.value.element.stripe); //直接使用element表格的属性、方法
+  // console.log(proTable.value.element.stripe); //直接使用element表格的属性、方法
   getColumns();
   getData();
 });
@@ -269,17 +284,28 @@ onMounted(() => {
 const getColumns = () => {
   window.$api.demo.getColumns({ tableName: 'demo', userName: '' }).then((res) => {
     allColumns.value = res.data;
+    //动态列设置筛选
+    allColumns.value.map((item) => {
+      item.prop === 'age' && (item.filter = 'select');
+    });
   });
 };
 /**
  * 获取表格数据
  * */
 const getData = () => {
-  window.$api.demo.getList({ id: 12, currentPage: page.pageNum }).then((res) => {
-    tableData.value = res.data.list;
-    page.total = res.data.total;
-    // page.fullData = res.data.list.length === res.data.total; //是否全量数据返回
-  });
+  loading.value = true;
+  window.$api.demo
+    .getList({ id: 12, currentPage: page.pageNum })
+    .then((res) => {
+      tableData.value = res.data.list;
+      page.total = res.data.total;
+      // page.fullData = res.data.list.length === res.data.total; //是否全量数据返回
+      // loading.value = false;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 /**
  * 修改表格数据
@@ -297,6 +323,40 @@ const pageChange = (pageNum, pageSize) => {
   page.pageNum = pageNum;
   page.pageSize = pageSize;
   getData();
+};
+// const arraySpanMethod = ({ row, column, rowIndex, columnIndex }) => {
+//   if (columnIndex === 3) {
+//     if (rowIndex === 0) {
+//       return {
+//         rowspan: 1,
+//         colspan: 1,
+//       };
+//     } else if (rowIndex === 1) {
+//       return {
+//         rowspan: 9,
+//         colspan: 1,
+//       };
+//     } else {
+//       return {
+//         rowspan: 0,
+//         colspan: 0,
+//       };
+//     }
+//   }
+// };
+/**
+ * 表格拖拽
+ * @indexObj {object} 拖拽的数据的新旧下标
+ * */
+const dragSort = (indexObj) => {
+  let oldIndex = indexObj.oldIndex + page2.pageSize * (page2.pageNum - 1); //拖拽元素的拖拽前的位置
+  let newIndex = indexObj.newIndex + page2.pageSize * (page2.pageNum - 1); //拖拽元素的拖拽后的位置
+
+  //元素交换位置
+  function swapArrayElements(arr, index1, index2) {
+    [arr[index1], arr[index2]] = [arr[index2], arr[index1]];
+  }
+  swapArrayElements(tableData2.value, oldIndex, newIndex);
 };
 /**
  * 表格复选框勾选
@@ -323,6 +383,7 @@ const confirmSetting = (columns) => {
   //   proTable.value.getColumns();
   // });
   // getData();
+  console.log(columns);
 };
 </script>
 

@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia'; // 替代vuex
 import * as ElIcons from '@element-plus/icons-vue'; // element icon
-import element, { ElMessage } from 'element-plus'; //引入message组件
+import { ElMessage } from 'element-plus'; //引入message组件
 import App from './App.vue';
 import router from '@/router';
 import api from '@/api';
@@ -33,5 +33,4 @@ for (const [key, fn] of Object.entries(directive)) {
 app.use(router);
 app.use(pinia);
 app.use(VueI18n);
-app.use(element);
 app.mount('#app');

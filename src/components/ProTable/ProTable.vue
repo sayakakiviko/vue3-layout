@@ -7,14 +7,13 @@
       radioChange 单选框发生变化时会触发该事件，返回对象_选择的数据；
       searchTable 搜索框内容改变会触发该事件，后端分页时返回字符串_搜索的关键字；注：前端分页时，可不使用该方法，会内部搜索有search标记的列。
       pageChange 页码或每页显示数改变会触发该事件，返回参数1为数字_当前页码，返回参数2为数字_每页显示数；注：为前端分页时，可不使用该方法。
-                 前端分页开启方法：isPagination为true；pagination的fullData为true。
+                 前端分页开启方法：pagination的fullData为true。
       confirmSetting 表头设置弹窗点击确定会触发该事件。返回设置的表头
 
     使用示例：
       <ProTable
         border
         isSearch
-        isPagination
         rowKey="number"
         ref="proTable"
         :tableData="tableData"
@@ -94,14 +93,13 @@
       ];
  -->
 <template>
-  <div class="pro-table">
+  <div class="pro-table" v-loading="data.loading">
     <!--搜索-->
     <TableSearch v-if="isSearch" @searchTable="searchTable" />
     <!--表格-->
     <el-table
       ref="tableRef"
       v-bind="$attrs"
-      :row-key="rowKey"
       :data="data.showTableData"
       @selection-change="
         (list) => {
@@ -109,21 +107,25 @@
         }
       "
     >
-      <template v-for="item in tableColumns" :key="item.prop">
+      <template v-for="item in tableColumns" :key="item">
         <!-- 默认插槽 -->
         <slot />
-        <!--单选框/复选框/展开列/序号-->
+        <!--单选框/复选框/展开列/序号/拖拽-->
         <el-table-column v-if="item.type" v-bind="item">
           <template #default="scope">
             <!-- expand -->
             <template v-if="item.type === 'expand'">
               <slot :name="item.type" v-bind="scope" />
             </template>
+            <!-- drag -->
+            <el-tag v-if="item.type === 'drag'" class="move">
+              <el-icon><Rank /></el-icon>
+            </el-tag>
             <!-- radio。需要传入rowKey，唯一值，如id、编号 -->
             <el-radio
               v-if="item.type === 'radio'"
               v-model="data.radio"
-              :label="scope.row[rowKey]"
+              :label="scope.row[$attrs.rowKey]"
               @change="emit('radioChange', scope.row)"
             >
               <i></i>
@@ -244,7 +246,7 @@
     </el-table>
     <!--分页-->
     <Pagination
-      v-if="isPagination"
+      v-if="pageable"
       :pagination="pageable"
       @sizeChange="sizeChange"
       @currentChange="currentChange"
@@ -261,6 +263,7 @@
 </template>
 
 <script setup name="proTable">
+import Sortable from 'sortablejs';
 import Pagination from './components/pagination.vue';
 import TableSearch from './components/tableSearch.vue';
 import HeaderSetting from './components/headerSetting.vue';
@@ -270,7 +273,7 @@ let searchTableData = []; //搜索框搜索出来的数据（前端分页用）
 const tableRef = ref(null); //表格ref
 
 const props = defineProps({
-  //是否要设置表头
+  //是否要动态设置表头
   isSetting: {
     type: Boolean,
     default: false,
@@ -280,17 +283,12 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  //是否需要分页
-  isPagination: {
-    type: Boolean,
-    default: false,
-  },
   // 每行数据的 Key，用来优化 Table 的渲染。单选时需要传入rowKey，唯一值，如id、编号
-  rowKey: {
-    type: String,
-    default: 'id',
-  },
-  //表格名称。设置动态列时必传
+  // rowKey: {
+  //   type: String,
+  //   default: 'id',
+  // },
+  //表格名称。设置动态列时必传，唯一值
   tableName: {
     type: String,
     default: '',
@@ -313,19 +311,21 @@ const props = defineProps({
   //分页
   pagination: {
     type: Object,
-    default: () => {
-      return {
-        pageSize: 10, //每页显示数
-        pageNum: 1, //当前页码
-        total: 0, //数据总量
-        fullData: false, //是否全量数据返回。为true时候将开启前端分页
-      };
-    },
+    default: undefined,
+    // default: () => {
+    //   return {
+    //     pageSize: 10, //每页显示数
+    //     pageNum: 1, //当前页码
+    //     total: 0, //数据总量
+    //     fullData: false, //是否全量数据返回。为true时候将开启前端分页
+    //   };
+    // },
   },
 });
 
 const data = reactive({
   showHeaderSetting: false, //列设置弹窗的显隐
+  loading: false, //加载状态
   radio: '', //单选值
   searchValue: '', //搜索内容
   sortColumn: {}, //激活排序的列
@@ -334,13 +334,15 @@ const data = reactive({
   showTableData: [], //实际展示的表格
 });
 
+const pageable = computed(() => props.pagination || false); //分页器
+
 watch(
   () => props.tableData,
   (val) => {
-    if (props.isPagination && props.pagination.fullData) {
+    if (pageable.value.fullData) {
       //若是有分页且全量数据返回了数据，则做前端分页
-      const startIndex = (props.pagination.pageNum - 1) * props.pagination.pageSize; //计算截取的数据的初始位置
-      data.showTableData = val.slice(startIndex, startIndex + props.pagination.pageSize);
+      const startIndex = (pageable.value.pageNum - 1) * pageable.value.pageSize; //计算截取的数据的初始位置
+      data.showTableData = val.slice(startIndex, startIndex + pageable.value.pageSize);
     } else {
       data.showTableData = val;
     }
@@ -353,7 +355,10 @@ watch(
   { deep: true, immediate: true },
 );
 
-const pageable = computed(() => props.pagination); //分页器
+onMounted(() => {
+  dragSort();
+});
+
 /**
  * 表头设置确认
  * @columns {array} 动态设置的列
@@ -361,6 +366,7 @@ const pageable = computed(() => props.pagination); //分页器
 const confirmSetting = (columns) => {
   // clearFilterAll();
   // pageable.value.pageNum = 1; //重置页码
+  getSelectOptions(data.showTableData);
   emit('confirmSetting', columns);
 };
 /**
@@ -434,7 +440,7 @@ const changeFilter = (column, info, filterType) => {
   };
 
   let tempList = [props.tableData]; //过滤过程中使用的临时二维数组
-  if (props.isPagination && props.pagination.fullData) {
+  if (pageable.value.fullData) {
     //前端分页时的筛选
     const startIndex = (pageable.value.pageNum - 1) * pageable.value.pageSize;
     let list = props.tableData.slice(startIndex, startIndex + pageable.value.pageSize); //当前页的数据
@@ -517,7 +523,7 @@ const clearFilterAll = () => {
 const searchTable = (value) => {
   clearFilterAll();
   //前端分页情况
-  if (props.isPagination && props.pagination.fullData) {
+  if (pageable.value.fullData) {
     searchTableData = [];
     props.tableData.map((item) => {
       data.searchColumns.map((prop) => {
@@ -541,7 +547,7 @@ const searchTable = (value) => {
  */
 const sizeChange = (val) => {
   //全量数据返回，前端分页
-  if (props.pagination.fullData) {
+  if (pageable.value.fullData) {
     let dataList = (searchTableData.length && searchTableData) || props.tableData; //有用框搜索数据
     data.showTableData = dataList.slice(0, val);
     getSelectOptions(data.showTableData);
@@ -558,7 +564,7 @@ const sizeChange = (val) => {
  */
 const currentChange = (val) => {
   //全量数据返回，前端分页
-  if (props.pagination.fullData) {
+  if (pageable.value.fullData) {
     const startIndex = (val - 1) * pageable.value.pageSize; //计算截取的数据的初始位置
     let dataList = (searchTableData.length && searchTableData) || props.tableData; //有用框搜索数据
     //截取对应页码的数据
@@ -570,6 +576,23 @@ const currentChange = (val) => {
   emit('pageChange', val, pageable.value.pageSize); //当前页，每页显示数
   clearFilterAll();
 };
+/**
+ * 拖拽排序
+ */
+const dragSort = () => {
+  const tbody = tableRef.value.$el.querySelector('.el-table__body-wrapper tbody');
+  Sortable.create(tbody, {
+    animation: 200, // 拖动时的元素的位置变化的动画时长，
+    handle: '.move',
+    onEnd({ newIndex, oldIndex }) {
+      // 首先删除原来的那一项，并且保存一份原来的那一项，因为splice返回的是一个数组，数组中的第一项就是删掉的那一项
+      const currRow = data.showTableData.splice(oldIndex, 1)[0];
+      // 然后把这一项加入到新位置上
+      data.showTableData.splice(newIndex, 0, currRow);
+      emit('dragSort', { newIndex, oldIndex });
+    },
+  });
+};
 
 const emit = defineEmits([
   'selectionChange',
@@ -577,6 +600,7 @@ const emit = defineEmits([
   'searchTable',
   'pageChange',
   'confirmSetting',
+  'dragSort',
 ]);
 defineExpose({
   element: tableRef,
@@ -601,6 +625,9 @@ defineExpose({
     display: flex;
     justify-content: end;
     margin-top: 16px;
+  }
+  .move {
+    cursor: pointer;
   }
 }
 .table-filter-box {
