@@ -4,6 +4,7 @@
     <el-input
       v-model.trim="searchValue"
       placeholder="请输入内容"
+      :size="size"
       :suffix-icon="Search"
       @change="emit('searchTable', searchValue)"
       clearable
@@ -13,6 +14,12 @@
 
 <script setup>
 import { Search } from '@element-plus/icons-vue';
+
+defineProps({
+  size: {
+    type: String,
+  },
+});
 
 const searchValue = ref(''); //搜索内容
 const emit = defineEmits(['searchTable']);

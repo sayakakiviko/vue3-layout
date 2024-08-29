@@ -160,15 +160,25 @@ const data = reactive({
 const append = [];
 let proTable = JSON.parse(localStorage.getItem('proTable_' + props.tableName)); //获取存在本地设置的表头
 
+//实际使用的左侧列表
+const leftData = computed(() => {
+  return data.leftDataList.filter((item) => item.label.includes(data.leftSearchValue));
+});
+//实际使用的右侧列表
+const rightData = computed(() => {
+  return data.rightDataList.filter((item) => item.label.includes(data.rightSearchValue));
+});
+const tColumns = computed(() => props.tableColumns); // 表头
+
 //获取全部的表头
 watch(
   () => props.allColumns,
   (newVal) => {
-    if (proTable?.right) {
-      //若设置了表头
-      localStorage.removeItem('proTable_' + props.tableName);
-      proTable = {};
-    }
+    // if (proTable?.right) {
+    //   //若设置了表头
+    //   localStorage.removeItem('proTable_' + props.tableName);
+    //   proTable = {};
+    // }
     init();
   },
 );
@@ -196,16 +206,6 @@ watch(
     }
   },
 );
-
-//实际使用的左侧列表
-const leftData = computed(() => {
-  return data.leftDataList.filter((item) => item.label.includes(data.leftSearchValue));
-});
-//实际使用的右侧列表
-const rightData = computed(() => {
-  return data.rightDataList.filter((item) => item.label.includes(data.rightSearchValue));
-});
-const tColumns = computed(() => props.tableColumns); // 表头
 
 /**
  * 初始化

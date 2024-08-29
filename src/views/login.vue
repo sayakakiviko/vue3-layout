@@ -16,7 +16,7 @@
         <el-form :model="formLogin" class="demo-form-inline">
           <h3 class="login-form-title">账号登录</h3>
           <el-form-item>
-            <el-input v-model="formLogin.username" placeholder="账号" clearable />
+            <el-input v-model="formLogin.username" placeholder="账号" clearable @keydown.enter="onLogin" />
           </el-form-item>
           <el-form-item>
             <el-input
@@ -25,6 +25,7 @@
               placeholder="密码"
               clearable
               show-password
+              @keydown.enter="onLogin"
             />
           </el-form-item>
           <el-form-item>
@@ -67,6 +68,7 @@ const onLogin = () => {
     return window.$message.error('用户名和密码不能为空');
 
   loading.value = true;
+  // 模拟异步登录
   setTimeout(() => {
     loading.value = false;
 

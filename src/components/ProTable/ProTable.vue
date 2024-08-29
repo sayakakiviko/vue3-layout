@@ -7,8 +7,9 @@
       radioChange 单选框发生变化时会触发该事件，返回对象_选择的数据；
       searchTable 搜索框内容改变会触发该事件，后端分页时返回字符串_搜索的关键字；注：前端分页时，可不使用该方法，会内部搜索有search标记的列。
       pageChange 页码或每页显示数改变会触发该事件，返回参数1为数字_当前页码，返回参数2为数字_每页显示数；注：为前端分页时，可不使用该方法。
-                 前端分页开启方法：pagination的fullData为true。
+                 前端分页开启方法：pagination(pageable)的fullData为true。
       confirmSetting 表头设置弹窗点击确定会触发该事件。返回设置的表头
+      dragSort 表格拖拽排序
 
     使用示例：
       <ProTable
@@ -43,6 +44,7 @@
         </template>
       </ProTable>
 
+      // 若设置了表头，这里的表头改变后需要清除对应的localStorage才会生效
       const tableColumns = [
         // {
         //   type: 'selection', //与单选互斥
@@ -87,7 +89,7 @@
         {
           prop: 'handle',
           label: '操作',
-          fixed: 'right',
+          fixed: 'right', //该列固定于右侧
           width: 200,
         },
       ];
@@ -95,7 +97,7 @@
 <template>
   <div class="pro-table" v-loading="data.loading">
     <!--搜索-->
-    <TableSearch v-if="isSearch" @searchTable="searchTable" />
+    <TableSearch v-if="isSearch" :size="$attrs.size" @searchTable="searchTable" />
     <!--表格-->
     <el-table
       ref="tableRef"
@@ -126,6 +128,7 @@
               v-if="item.type === 'radio'"
               v-model="data.radio"
               :label="scope.row[$attrs.rowKey]"
+              class="column-radio"
               @change="emit('radioChange', scope.row)"
             >
               <i></i>
@@ -293,6 +296,16 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  //获取表格数据的接口
+  // requestApi: {
+  //   type: Function,
+  //   default: null,
+  // },
+  //获取表格数据的入参
+  requestParams: {
+    type: Object,
+    default: () => {},
+  },
   //全部的表头。isSetting为true时需要从接口获取数据
   allColumns: {
     type: Array,
@@ -357,8 +370,25 @@ watch(
 
 onMounted(() => {
   dragSort();
+  // props.requestApi && getData();
 });
 
+/**
+ * 获取表格数据
+ * */
+// const getData = () => {
+//   data.loading = true;
+//   props
+//     .requestApi(props.requestParams)
+//     .then((res) => {
+//       data.showTableData = res.data.list;
+//       pageable.value.total = res.data.total;
+//       pageable.value.fullData = res.data.list.length === res.data.total; //是否全量数据返回
+//     })
+//     .finally(() => {
+//       data.loading = false;
+//     });
+// };
 /**
  * 表头设置确认
  * @columns {array} 动态设置的列
@@ -627,7 +657,10 @@ defineExpose({
     margin-top: 16px;
   }
   .move {
-    cursor: pointer;
+    cursor: move;
+    span i {
+      cursor: move;
+    }
   }
 }
 .table-filter-box {
@@ -669,6 +702,9 @@ defineExpose({
     padding: 100px 0;
     line-height: 30px;
   }
+}
+:deep(.column-radio .el-radio__label) {
+  display: none;
 }
 .active-color {
   color: var(--el-color-primary);

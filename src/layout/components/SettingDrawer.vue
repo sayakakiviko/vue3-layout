@@ -46,7 +46,7 @@
           <el-col :span="12">{{ $t('系统文本.菜单模式') }}：</el-col>
           <el-col :span="12">
             <el-select v-model="settingStore.accordion" size="small" style="width: 100px">
-              <el-option :label="$t('系统文本.正常')" :value="false" />
+              <el-option :label="$t('系统文本.普通')" :value="false" />
               <el-option :label="$t('系统文本.手风琴')" :value="true" />
             </el-select>
           </el-col>

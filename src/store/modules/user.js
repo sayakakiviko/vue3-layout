@@ -4,7 +4,7 @@ import VueI18n from '@/i18n';
 export const useUserStore = defineStore({
   id: 'user',
   state: () => ({
-    userInfo: JSON.parse(sessionStorage.getItem('userInfo')) || {}, //用户信息
+    userInfo: JSON.parse(localStorage.getItem('userInfo')) || {}, //用户信息
   }),
   actions: {
     /**
@@ -12,7 +12,7 @@ export const useUserStore = defineStore({
      * @userInfo {object} 用户信息
      * */
     login(userInfo) {
-      sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+      localStorage.setItem('userInfo', JSON.stringify(userInfo));
       this.userInfo = userInfo;
       VueI18n.global.locale = userInfo.language;
       window.$message.success('登录成功');
@@ -21,7 +21,7 @@ export const useUserStore = defineStore({
      * 退出登录
      * */
     logout() {
-      sessionStorage.removeItem('userInfo');
+      localStorage.removeItem('userInfo');
       this.userInfo = {};
     },
     /**

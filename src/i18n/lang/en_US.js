@@ -8,7 +8,7 @@ export default {
     主题颜色: 'theme color',
     菜单模式: 'menu mode',
     手风琴: 'accordion',
-    正常: 'normal',
+    普通: 'normal',
     页签显示: 'tabs display',
     页签风格: 'tabs style',
     卡片: 'card',

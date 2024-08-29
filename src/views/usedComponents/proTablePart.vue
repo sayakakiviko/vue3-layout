@@ -58,7 +58,6 @@
       @selectionChange="selectionChange"
       @confirmSetting="confirmSetting"
     >
-      <template #drag>drag</template>
       <template #number="scope">
         <el-link type="primary">{{ scope.row.number }}</el-link>
       </template>
@@ -84,6 +83,7 @@
 <script setup>
 const proTable = ref(null); //表格ref
 const loading = ref(false);
+const requestApi = ref(window.$api.demo.getList);
 const allColumns = ref([]); //全部的列
 const tableColumns = ref([
   // {
@@ -187,10 +187,10 @@ const tableColumns2 = ref([
     // width: 800,
     // fixed: true,
   },
-  // {
-  //   prop: 'age',
-  //   label: '年龄',
-  // },
+  {
+    prop: 'age',
+    label: '年龄',
+  },
   {
     prop: 'time',
     label: '创建时间',

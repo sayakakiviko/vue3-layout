@@ -9,7 +9,7 @@ const router = createRouter({
 
 /** 全局前置路由守卫 */
 router.beforeEach((to, from) => {
-  if (sessionStorage.getItem('userInfo')) {
+  if (localStorage.getItem('userInfo')) {
     //已登录
     if (from.path !== '/login' && to.path === '/login') return false; //登录后就不能再返回登录页了
 
