@@ -3,8 +3,9 @@
   <el-aside :width="isCollapse ? '64px' : '200px'">
     <div class="side">
       <div class="logo" @click="router.push('/')">
-        <img v-show="!isCollapse" src="@/assets/images/logo.png" />
-        <img v-show="isCollapse" src="@/assets/images/logo_mini.png" />
+        <img src="@/assets/images/vite.svg" />
+        <!--<img v-show="!isCollapse" src="@/assets/images/logo.png" />-->
+        <!--<img v-show="isCollapse" src="@/assets/images/logo_mini.png" />-->
       </div>
       <div class="menu-list">
         <el-scrollbar>

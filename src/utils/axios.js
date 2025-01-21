@@ -71,7 +71,7 @@ const request = (axiosConfig, cancelRepeatRequest = true) => {
        * 这里没有对 config 不做任何处理，直接返回
        */
       // 这里还可以添加token等等
-      // config.headers['Authorization'] = getToken()
+      config.headers['Authorization'] = localStorage.getItem('token');
       return config;
     },
     (error) => Promise.reject(error),

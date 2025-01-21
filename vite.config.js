@@ -50,6 +50,7 @@ export default defineConfig({
     cors: true, // 允许跨域
     // 设置代理，根据我们项目实际情况配置
     proxy: {
+      // '/m1': ['http://127.0.0.1:4523/', 'http://192.168.1.18:8888/'],
       '/api': {
         target: 'https://api.uomg.com/',
         secure: true, // 如果是https接口，需要配置这个参数
@@ -61,6 +62,24 @@ export default defineConfig({
         secure: true, // 如果是https接口，需要配置这个参数
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/m1/, '/m1'), // 路径重写
+      },
+      '/rdsystem': {
+        target: 'http://192.168.1.18:8888/',
+        secure: true, // 如果是https接口，需要配置这个参数
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/rdsystem/, '/rdsystem'), // 路径重写
+      },
+      '/rdkm': {
+        target: 'http://192.168.1.18:8888/',
+        secure: true, // 如果是https接口，需要配置这个参数
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/rdkm/, '/rdkm'), // 路径重写
+      },
+      '/workshop': {
+        target: 'http://192.168.1.18:8888/',
+        secure: true, // 如果是https接口，需要配置这个参数
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/workshop/, '/workshop'), // 路径重写
       },
     },
   },

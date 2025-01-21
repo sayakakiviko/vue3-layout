@@ -1,5 +1,10 @@
 import { get, post } from '@/utils/axios';
 
+const wcHeaders = {
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  },
+};
 const demo = {
   //get params传参
   getUserName(param, config) {
