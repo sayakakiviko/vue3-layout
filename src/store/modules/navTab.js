@@ -8,8 +8,7 @@ const defaultTabItem = {
   name: 'Home',
 };
 
-export const useNavTabStore = defineStore({
-  id: 'navTab',
+export const useNavTabStore = defineStore('navTab', {
   state: () => ({
     tabList: [defaultTabItem], //保存页签tab的数组
     cacheList: [], // keep-alive缓存的数组, 元素是组件名

@@ -1,8 +1,7 @@
 import { defineStore } from 'pinia';
 import VueI18n from '@/i18n';
 
-export const useUserStore = defineStore({
-  id: 'user',
+export const useUserStore = defineStore('user', {
   state: () => ({
     userInfo: JSON.parse(localStorage.getItem('userInfo')) || {}, //用户信息
   }),

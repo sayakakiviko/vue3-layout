@@ -16,7 +16,12 @@
         <el-form :model="formLogin" class="demo-form-inline">
           <h3 class="login-form-title">账号登录</h3>
           <el-form-item>
-            <el-input v-model="formLogin.username" placeholder="账号" clearable @keydown.enter="onLogin" />
+            <el-input
+              v-model="formLogin.username"
+              placeholder="账号"
+              clearable
+              @keydown.enter="onLogin"
+            />
           </el-form-item>
           <el-form-item>
             <el-input
@@ -77,7 +82,7 @@ const onLogin = () => {
       name: '张三丰',
       username: 'admin',
       role: 'admin',
-      language: 'zh',
+      language: 'zh_CN',
       avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
     };
     userStore.login(userInfo);

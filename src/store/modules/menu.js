@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import routes from '@/router/routes';
 import { cloneDeep } from 'lodash';
+import routes from '@/router/routes';
 
 let routeList = cloneDeep(routes); //路由表
 let menuList = []; //路由表转为的菜单
@@ -38,12 +38,14 @@ const layoutHandle = (arr) => {
 };
 layoutHandle(routeList);
 
-export const useMenuStore = defineStore({
-  id: 'menu',
+export const useMenuStore = defineStore('menu', {
   state: () => ({
     menuList, //菜单列表
     menuActive: '/home', //激活的菜单
   }),
+  getters:{
+
+  },
   actions: {
     /**
      * 菜单激活项改变

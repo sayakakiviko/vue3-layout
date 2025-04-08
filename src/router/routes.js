@@ -72,7 +72,7 @@ const routes = [
               id: '3-1',
               title: '演示',
               icon: 'document',
-              // roles: ['user'], //roles的值代表哪些角色可以进入此路由
+              roles: ['user'], //roles的值代表哪些角色可以进入此路由
               breadcrumb: [
                 { title: '其他', name: 'other' },
                 { title: '演示', name: 'demo' },

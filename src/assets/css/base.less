@@ -75,7 +75,7 @@ table {
 }
 
 ::-webkit-scrollbar-corner {
-  background: #fff;
+  background-color: var(--el-bg-color);
 }
 
 ::-webkit-scrollbar {
@@ -95,8 +95,22 @@ table {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(157, 165, 183, 0.4)
 }
-
 /* 滚动条优化 end */
+
+/* nprogress */
+#nprogress .bar {
+  background: var(--el-color-primary) !important;
+}
+#nprogress .spinner-icon {
+  border-top-color: var(--el-color-primary) !important;
+  border-left-color: var(--el-color-primary) !important;
+}
+#nprogress .peg {
+  box-shadow:
+    0 0 10px var(--el-color-primary),
+    0 0 5px var(--el-color-primary) !important;
+}
+/* nprogress end */
 
 .fl {
   float: left;
@@ -151,13 +165,21 @@ table {
 .mb60 {
   margin-bottom: 60px;
 }
+.nowrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
 
 .page-wrap {
   overflow-y: auto;
-  background: #fff;
+  box-sizing: border-box;
+  height: 100%;
+  //height: calc(100vh - 190px);
+  background-color: var(--el-bg-color);
   padding: 20px;
-  // height: calc(100% - 40px);
-  height: calc(100vh - 190px);
   border-radius: 8px;
 
   h3 {
@@ -181,7 +203,7 @@ table {
   box-sizing: border-box;
   padding: 20px;
   margin-bottom: 20px;
-  background-color: var(--el-color-white);
+  background-color: var(--el-bg-color);
   border-radius: 4px;
   box-shadow: var(--el-box-shadow-lighter);
 
@@ -192,4 +214,8 @@ table {
     color: var(--el-color-primary);
     border-radius: 50%;
   }
+}
+
+.dark .page-wrap{
+  border: 1px solid var(--el-border-color);
 }

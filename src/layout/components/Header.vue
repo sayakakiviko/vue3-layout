@@ -1,7 +1,6 @@
 <!--顶部栏-->
 <template>
   <el-header>
-    <!--<h2>{{ $t('projectName') }}</h2>-->
     <Breadcrumb></Breadcrumb>
     <div class="right-bar">
       <!--搜索-->
@@ -23,15 +22,15 @@
       </el-popover>
 
       <!--语言切换-->
-      <el-dropdown class="language">
-        <el-icon size="22" style="outline: none"><SwitchFilled /></el-icon>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="userStore.changeLanguage('zh')">简体中文</el-dropdown-item>
-            <el-dropdown-item @click="userStore.changeLanguage('en')">English</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+      <!--<el-dropdown class="language">-->
+      <!--  <el-icon size="22" style="outline: none"><SwitchFilled /></el-icon>-->
+      <!--  <template #dropdown>-->
+      <!--    <el-dropdown-menu>-->
+      <!--      <el-dropdown-item @click="userStore.changeLanguage('zh')">简体中文</el-dropdown-item>-->
+      <!--      <el-dropdown-item @click="userStore.changeLanguage('en')">English</el-dropdown-item>-->
+      <!--    </el-dropdown-menu>-->
+      <!--  </template>-->
+      <!--</el-dropdown>-->
 
       <!--用户信息-->
       <el-dropdown class="user-warp">
@@ -45,27 +44,6 @@
             <el-dropdown-item @click="data.showDrawer = true">
               {{ $t('系统文本.全局配置') }}
             </el-dropdown-item>
-            <!--语言切换-->
-            <!--<el-dropdown-item class="language" style="padding: 8px 16px">
-              <el-dropdown placement="left">
-                <span class="el-dropdown-link">
-                  {{ $t('header.language') }}
-                  <el-icon class="el-icon&#45;&#45;right" style="margin: 0">
-                    <arrow-down />
-                  </el-icon>
-                </span>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item @click="userStore.changeLanguage('zh')">
-                      简体中文
-                    </el-dropdown-item>
-                    <el-dropdown-item @click="userStore.changeLanguage('en')">
-                      English
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </el-dropdown-item>-->
             <el-dropdown-item @click="logout">
               {{ $t('系统文本.退出登录') }}
             </el-dropdown-item>
@@ -120,8 +98,9 @@ const logout = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--el-color-white);
-  border-bottom: 1px solid #ddd;
+  background-color: var(--el-bg-color);
+  border-bottom: 1px solid var(--el-border-color);
+  --el-header-height: 48px;
   .right-bar {
     display: flex;
     justify-content: center;

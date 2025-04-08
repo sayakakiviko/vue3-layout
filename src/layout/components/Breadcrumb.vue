@@ -1,6 +1,6 @@
 <template>
   <div class="breadcrumb" :class="{ hide: !breadcrumbStore.breadcrumb.length }">
-    <el-breadcrumb style="line-height: 30px" :separator-icon="ArrowRight">
+    <el-breadcrumb class="nowrap" style="line-height: 30px" :separator-icon="ArrowRight">
       <el-breadcrumb-item
         v-for="(item, index) in breadcrumbStore.breadcrumb"
         :key="item.title"

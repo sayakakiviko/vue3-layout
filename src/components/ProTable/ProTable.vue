@@ -241,8 +241,7 @@
       <template #empty>
         <div class="table-empty">
           <slot name="empty">
-            <img src="@/assets/images/not_data.png" alt="notData" />
-            <div>暂无数据</div>
+            <el-empty description="暂无数据" />
           </slot>
         </div>
       </template>
@@ -259,7 +258,7 @@
   <HeaderSetting
     v-model:isShow="data.showHeaderSetting"
     :tableName="tableName"
-    :allColumns="allColumns"
+    :allTableColumns="allTableColumns"
     :tableColumns="tableColumns"
     @confirmSetting="confirmSetting"
   />
@@ -307,7 +306,7 @@ const props = defineProps({
     default: () => {},
   },
   //全部的表头。isSetting为true时需要从接口获取数据
-  allColumns: {
+  allTableColumns: {
     type: Array,
     default: () => [],
   },
@@ -646,7 +645,7 @@ defineExpose({
   //height: 100%;
   :deep(.el-table tr th) {
     background: var(--el-fill-color-light);
-    color: #333;
+    color: var(--el-text-color-primary);
   }
   :deep(.el-table__column-filter-trigger) {
     display: none;

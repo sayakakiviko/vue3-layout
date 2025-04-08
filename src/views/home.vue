@@ -8,43 +8,15 @@
     <el-button v-jump="['directive', { id: 3 }]">query传参</el-button>
 
     <el-button type="primary" @click="dialogShow = true">上传</el-button>
-    <pageRender :renderData="elementData"></pageRender>
   </div>
 
   <UploadDialog multiple v-model="dialogShow" :limit="2" @submit="submit" />
 </template>
 
 <script setup name="Home">
-let hr = ref(null);
-let btn = ref(null);
-let dialogShow = ref(false);
-
-/*const elementData = ref([
-  {
-    id: 'QjyE5G1',
-    icon: 'image',
-    tag: 'el-image',
-    config: {
-      attr: {
-        src: src,
-        fit: '',
-        previewImage: true,
-        hideOnClickModal: true,
-        previewSrcList: [],
-      },
-      layout: {
-        display: 'inline-block',
-        width: '200px',
-        height: '200px',
-      },
-      style: {
-        backgroundColor: '',
-      },
-      event: {},
-    },
-    ref: 'QjyE5G1',
-  },
-]); //页面数据*/
+const hr = ref(null);
+const btn = ref(null);
+const dialogShow = ref(false);
 
 /**
  * 提交上传
@@ -53,6 +25,9 @@ let dialogShow = ref(false);
 const submit = (fileList) => {
   console.log(fileList);
 };
+// onMounted(()=>{
+//   window.globalDragPage.setValue('KuWOKGw','test')
+// })
 
 window.home = {};
 window.home.dialogShow = dialogShow;

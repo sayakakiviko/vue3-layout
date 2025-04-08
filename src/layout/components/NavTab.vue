@@ -85,12 +85,13 @@ const dropdownVisible = (visible, index) => {
 
 <style scoped lang="less">
 .nav-tab {
-  height: 40px;
+  height: 38px;
   padding: 0 20px;
-  background-color: var(--el-color-white);
+  background-color: var(--el-bg-color);
+  border-bottom: 1px solid var(--el-border-color);
   :deep(.el-tabs) {
     --el-tabs-header-height: 26px;
-    margin-top: 13px;
+    margin-top: 11px;
     .el-tabs__nav-next,
     .el-tabs__nav-prev {
       line-height: 32px;

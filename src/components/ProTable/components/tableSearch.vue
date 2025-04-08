@@ -3,7 +3,7 @@
   <section class="search">
     <el-input
       v-model.trim="searchValue"
-      placeholder="请输入内容"
+      placeholder="请输入搜索内容"
       :size="size"
       :suffix-icon="Search"
       @change="emit('searchTable', searchValue)"

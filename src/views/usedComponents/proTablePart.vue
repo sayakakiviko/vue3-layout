@@ -10,9 +10,9 @@
         ref="proTable"
         tableName="demo"
         :height="400"
-        :allColumns
         :tableData
         :tableColumns
+        :allTableColumns="allColumns"
         :pagination="page"
         @pageChange="pageChange"
         @radioChange="radioChange"
@@ -46,11 +46,11 @@
     <h2 style="margin-bottom: 20px">表格2 - 本地mock数据（前端分页）</h2>
     <ProTable
       border
-      isSearch
       isSetting
+      isSearch
       rowKey="number"
       tableName="demo2"
-      :allColumns="allColumns"
+      :allTableColumns="allColumns"
       :tableData="tableData2"
       :tableColumns="tableColumns2"
       :pagination="page2"

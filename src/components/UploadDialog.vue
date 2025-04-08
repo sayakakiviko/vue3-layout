@@ -10,8 +10,8 @@
       draggable
       destroy-on-close
       v-model="isShowDialog"
-      :title
       :close-on-click-modal="false"
+      :title
       width="600"
       @close="close"
     >
@@ -48,7 +48,7 @@
 
 <script setup>
 const attrs = useAttrs(); //js 里使用 $attrs
-const props = defineProps({
+const { title } = defineProps({
   //弹窗标题
   title: {
     type: String,

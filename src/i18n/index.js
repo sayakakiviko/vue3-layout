@@ -5,10 +5,10 @@ import en_US from './lang/en_US';
 
 // 注册i8n实例并引入语言文件
 const i18n = createI18n({
-  locale: 'zh', // 默认显示的语言
+  locale: JSON.parse(localStorage.getItem('globalSetting'))?.language || 'zh_CN', // 默认显示的语言
   messages: {
-    zh: zh_CN, // 引入语言文件
-    en: en_US,
+    zh_CN, // 引入语言文件
+    en_US,
   },
 });
 

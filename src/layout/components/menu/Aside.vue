@@ -1,9 +1,10 @@
 <!--左侧菜单栏-->
 <template>
   <el-aside :width="isCollapse ? '64px' : '200px'">
-    <div class="side">
+    <div id="aside">
       <div class="logo" @click="router.push('/')">
-        <img src="@/assets/images/vite.svg" />
+        <img v-show="!isCollapse" src="http://internal.pisx.com:85/logo.png" />
+        <img v-show="isCollapse" src="@/assets/images/pi.png" style="width: 30px; height: 30px" />
         <!--<img v-show="!isCollapse" src="@/assets/images/logo.png" />-->
         <!--<img v-show="isCollapse" src="@/assets/images/logo_mini.png" />-->
       </div>
@@ -58,7 +59,7 @@ onBeforeUnmount(() => {
 <style scoped lang="less">
 .el-aside {
   z-index: 1;
-  background-color: var(--el-color-white);
+  background-color: var(--el-bg-color);
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.08);
   transition: all ease 0.35s;
   .logo {
@@ -68,14 +69,14 @@ onBeforeUnmount(() => {
     cursor: pointer;
     img {
       height: 40px;
-      margin-top: 10px;
+      margin-top: 16px;
     }
   }
   .el-menu {
     height: calc(100vh - 90px);
     border-right: none;
     :deep(.el-menu-item.is-active) {
-      background-color: var(--el-color-primary-light-9);
+      background-color: var(--el-menu-active-bg-color);
     }
   }
   .collapse-wrapper {
@@ -86,5 +87,9 @@ onBeforeUnmount(() => {
     line-height: 29px;
     cursor: pointer;
   }
+}
+.dark .el-aside {
+  border-right: 1px solid var(--el-border-color);
+  box-shadow: unset;
 }
 </style>

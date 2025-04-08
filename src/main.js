@@ -8,11 +8,10 @@ import api from '@/api';
 import VueI18n from '@/i18n';
 import directive from '@/utils/directive'; //自定义指令
 import prototype from '@/utils/prototype'; //全局方法
-import piniaPluginPersist from 'pinia-plugin-persist'; //pinia持久化插件
-// import PageRender from '../public/page-render.mjs';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'; //pinia持久化插件
 import '@/assets/css/base.less';
-// import '../public/components.less';
 import 'element-plus/dist/index.css';
+import 'element-plus/theme-chalk/dark/css-vars.css'; //暗黑模式
 
 //注册全局方法到window下
 window.$api = api; //全局api
@@ -21,7 +20,7 @@ window.$message = ElMessage; //全局$message。调用：window.$message('消息
 
 const app = createApp(App);
 const pinia = createPinia();
-pinia.use(piniaPluginPersist); //pinia持久化
+pinia.use(piniaPluginPersistedstate); //pinia持久化
 
 //全局注册所有icon组件
 for (const [key, component] of Object.entries(ElIcons)) {
@@ -35,6 +34,5 @@ for (const [key, fn] of Object.entries(directive)) {
 app.use(router);
 app.use(pinia);
 app.use(VueI18n);
-// app.use(element);
-// app.use(PageRender);
+app.use(element);
 app.mount('#app');

@@ -2,8 +2,8 @@
 <template>
   <section class="pagination">
     <el-pagination
-      small
       background
+      size="small"
       :total="pageable.total"
       v-model:current-page="pageable.pageNum"
       v-model:page-size="pageable.pageSize"

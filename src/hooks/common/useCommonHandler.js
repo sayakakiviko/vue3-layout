@@ -30,6 +30,7 @@ const useCommonHandler = {
    * 模糊搜索（前端分页用）
    * @tableData {array} 表格数据数组
    * @val {string} 搜索关键字字符串
+   * @return 返回搜索结果
    */
   searchTableData(tableData, val) {
     let SearchTable = [];

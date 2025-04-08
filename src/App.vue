@@ -1,13 +1,13 @@
 <template>
-  <el-config-provider :locale="$i18n.locale === 'zh' ? zhCn : en">
+  <el-config-provider :locale="$i18n.locale === 'zh_CN' ? zh_CN : en_US">
     <router-view />
   </el-config-provider>
 </template>
 
 <script setup>
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
-import en from 'element-plus/dist/locale/en.mjs';
-import { useMenuStore, useNavTabStore } from '@/store';
+import zh_CN from 'element-plus/dist/locale/zh-cn.mjs';
+import en_US from 'element-plus/dist/locale/en.mjs';
+import { useSettingStore, useMenuStore, useNavTabStore } from '@/store';
 
 const menuStore = useMenuStore();
 const navTabStore = useNavTabStore();
@@ -22,6 +22,8 @@ watch(
   },
 );
 
+const { initTheme } = useSettingStore();
+initTheme();
 /**
  * 路由变化后添加对应的tab标签
  * */
@@ -41,7 +43,7 @@ const handleNavTab = () => {
   overflow: hidden;
   width: 100%;
   height: 100%;
-  background: var(--el-color-info-light-9);
+  background-color: var(--el-bg-color-page);
   line-height: 1.6;
   font-size: 14px;
 }

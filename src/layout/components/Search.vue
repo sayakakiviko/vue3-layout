@@ -24,12 +24,7 @@
 
   <!--全局搜索弹窗-->
   <el-dialog v-model="data.searchVisible" title="全局搜索">
-    <el-input
-      v-model.trim="data.keyword"
-      :placeholder="$t('请输入')"
-      class="search"
-      size="small"
-    >
+    <el-input v-model.trim="data.keyword" :placeholder="$t('请输入')" class="search" size="small">
       <template #prepend>
         <el-select v-model="data.selectVal" size="small">
           <el-option
@@ -84,7 +79,7 @@ data.selectList = [
  * 搜索
  * */
 const onSearch = () => {
-  if (!data.keyword) return window.$message.error('搜索内容不能为空');
+  if (!data.keyword) return window.$message.warning('搜索内容不能为空');
   data.searchVisible = true;
   console.log(123);
 };

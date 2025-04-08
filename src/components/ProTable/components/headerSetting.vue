@@ -87,7 +87,8 @@
                 @change="(value) => checkedChange(value, false)"
               >
                 <template v-for="item in rightData" :key="item.prop">
-                  <el-checkbox :value="item.prop" :disabled="item.disabled">
+                  <!--<el-checkbox :value="item.prop" :disabled="item.disabled">-->
+                  <el-checkbox :value="item.prop">
                     <div class="check-row">
                       <div class="row-text">
                         <el-tooltip placement="top" :content="item.label">
@@ -130,7 +131,7 @@ const props = defineProps({
     default: '',
   },
   //全部的表头
-  allColumns: {
+  allTableColumns: {
     type: Array,
     default: () => [],
   },
@@ -146,15 +147,17 @@ const data = reactive({
   fixedData: [], //固定显示在列设置右侧的数据
   openLeftData: [], //弹窗打开时左侧数据
   openRightData: [], //弹窗打开时右侧数据
+
   leftCheckAll: false, //标记左侧是否已全选
   leftIndeterminate: false, //左侧的不确定状态，仅负责样式控制
   leftSearchValue: '', //左侧搜索框
-  leftDataList: [], //左侧的复选框数据
+  leftDataList: [], //左侧的数据
   leftCheckedList: [], //左侧选中的数据
+
   rightCheckAll: false, //标记右侧是否已全选
   rightIndeterminate: false, //右侧的不确定状态，仅负责样式控制
   rightSearchValue: '', //左侧搜索框
-  rightDataList: [], //左侧的复选框数据
+  rightDataList: [], //左侧的数据
   rightCheckedList: [], //右侧选中的数据
 });
 const append = [];
@@ -172,7 +175,7 @@ const tColumns = computed(() => props.tableColumns); // 表头
 
 //获取全部的表头
 watch(
-  () => props.allColumns,
+  () => props.allTableColumns,
   (newVal) => {
     // if (proTable?.right) {
     //   //若设置了表头
@@ -228,7 +231,7 @@ const init = () => {
     tColumns.value.splice(0, tColumns.value.length + 1, ...proTable.columns);
   } else {
     //左侧数据
-    const leftList = props.allColumns.filter((item) => {
+    const leftList = props.allTableColumns.filter((item) => {
       return data.fixedData.every((key) => item.prop !== key.prop);
     });
 
@@ -455,7 +458,7 @@ const emit = defineEmits(['confirmSetting']);
         }
         .check-row {
           width: 100%;
-          background: #fff;
+          background: var(--el-fill-color-blank);
           .row-mover {
             margin-right: 6px;
           }

@@ -230,9 +230,9 @@ const directive = {
 
       if (Array.isArray(value)) {
         if (value.length > 0) {
-          const permissionValues = value;
+          // const permissionValues = value;
           // 对当前用户的角色权限和传入指令的权限类型进行比对。如果当前用户无权限则会执行节点删除操作。
-          const hasPermission = permissionValues.includes(userInfo.role);
+          const hasPermission = value.includes(userInfo.role);
           if (!hasPermission && el.parentNode) {
             el.parentNode.removeChild(el);
           }
